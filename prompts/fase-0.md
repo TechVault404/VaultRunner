@@ -31,3 +31,11 @@ Todas quedaron registradas en la sección 18 del documento.
 ## Prompt de la fase
 
 > Implementa la Fase 0 (sección 7): crea el proyecto Vite + TypeScript + Phaser 3 con la estructura de carpetas de la sección 3, la configuración de resolución pixel-perfect, todas las escenas vacías con su navegación, el `SaveSystem` versionado y el `InputSystem` con acciones abstractas. Usa placeholders de color para todo.
+
+## Ajuste: estándar de diseño
+
+Después de la primera versión se agregaron `DISENO.md`, `src/theme.ts`, `ASSETS.md`, los assets en `public/assets/`, `screens/`, `docs/diseno/` y `tools/assets/`.
+
+> See the things I added? I've also added a @DISENO.md. Follow the design for this phase 0
+
+La IA rehízo las escenas de la Fase 0 con la BitmapFont, los botones y paneles 9-slice, el HUD y las coordenadas de `screens/*.png`, y movió todo valor visual a `src/theme.ts`.

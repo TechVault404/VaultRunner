@@ -1,13 +1,14 @@
 import Phaser from 'phaser';
-import { GAME, LAYOUT, UI } from '../config';
 import { InputSystem } from '../systems/InputSystem';
+import { FONT, LAYOUT, SCREEN, UI } from '../theme';
+import { Button } from '../ui/Button';
 import { ButtonList } from '../ui/ButtonList';
-import { addText } from '../ui/text';
-import { TextButton } from '../ui/TextButton';
+import { addOverlay, addPanel } from '../ui/panels';
+import { pixelText } from '../ui/text';
 import { fadeToScene } from '../ui/transitions';
 import { SceneKey } from './keys';
 
-/** Overlay launched on top of the paused Game scene. */
+/** Overlay over the frozen Game scene. Reference: screens/07_pausa.png */
 export class PauseScene extends Phaser.Scene {
   private inputSystem!: InputSystem;
   private buttons!: ButtonList;
@@ -18,21 +19,18 @@ export class PauseScene extends Phaser.Scene {
 
   create(): void {
     this.inputSystem = new InputSystem(this);
-    const { width, height } = GAME;
-    const centerX = width / 2;
     const layout = LAYOUT.pause;
 
-    this.add.rectangle(0, 0, width, height, UI.pauseOverlayColor, UI.pauseOverlayAlpha).setOrigin(0);
-    addText(this, centerX, layout.titleY, 'PAUSA', { size: UI.fontSizeTitle, color: UI.titleColor });
+    addOverlay(this, UI.overlay.pause);
+    addPanel(this, layout.panel);
+    pixelText(this, SCREEN.cx, layout.title.y, 'PAUSA', { scale: FONT.scale.title, align: 'center' });
 
+    const { x, y, w, h, step } = layout.buttons;
+    const at = (i: number) => ({ x, y: y + i * step, w, h });
     this.buttons = new ButtonList(this.inputSystem, [
-      new TextButton(this, centerX, layout.buttonsY, 'Continuar', () => this.resumeGame()),
-      new TextButton(this, centerX, layout.buttonsY + UI.buttonSpacing, 'Reiniciar', () =>
-        this.leaveTo(SceneKey.Game),
-      ),
-      new TextButton(this, centerX, layout.buttonsY + UI.buttonSpacing * 2, 'Menú', () =>
-        this.leaveTo(SceneKey.Menu),
-      ),
+      new Button(this, at(0), { label: 'CONTINUAR', icon: 'play', onClick: () => this.resumeGame() }),
+      new Button(this, at(1), { label: 'REINICIAR', icon: 'retry', onClick: () => this.leaveTo(SceneKey.Game) }),
+      new Button(this, at(2), { label: 'MENÚ', icon: 'home', onClick: () => this.leaveTo(SceneKey.Menu) }),
     ]);
   }
 

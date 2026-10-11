@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SAVE } from '../src/config';
+import { CHARACTER, SAVE } from '../src/config';
 import {
   createDefaultSave,
   parseSave,
@@ -54,6 +54,8 @@ describe('parseSave', () => {
       { ...createDefaultSave(), settings: { music: 'yes', sfx: true } },
       { ...createDefaultSave(), stats: null },
       { ...createDefaultSave(), character: { ...createDefaultSave().character, skin: 1.5 } },
+      { ...createDefaultSave(), character: { ...createDefaultSave().character, skin: CHARACTER.skins } },
+      { ...createDefaultSave(), character: { ...createDefaultSave().character, hair: -1 } },
       { ...createDefaultSave(), character: { ...createDefaultSave().character, name: 'x'.repeat(SAVE.nameMaxLength + 1) } },
     ];
     for (const value of cases) {

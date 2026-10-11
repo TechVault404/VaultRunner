@@ -85,7 +85,7 @@ README.md
 ```
 
 ### Reglas de código para la IA
-- Ningún número "mágico" fuera de `config.ts`.
+- Ningún número "mágico" fuera de `config.ts` (balance) y `src/theme.ts` (visual). Todo lo visual sigue `DISENO.md`.
 - Cada sistema es una clase independiente que la escena `Game` orquesta.
 - Lógica de juego separada del render cuando sea posible (para poder probarla).
 - Usar *object pools* para proyectiles, enemigos, obstáculos y monedas.
@@ -477,7 +477,7 @@ El mundo avanza por zonas según la distancia. Al cambiar de zona hay una transi
 Cada prompt se envía **junto con este documento completo**. Guardar cada prompt usado (y sus correcciones) en `/prompts/fase-N.md`.
 
 **Prompt de sistema / contexto (al iniciar cada sesión):**
-> Eres un desarrollador senior de videojuegos con Phaser 3 y TypeScript. Te adjunto el documento de especificaciones del juego; es la fuente de verdad. Trabajaremos una fase a la vez. No implementes nada de fases futuras salvo lo que la fase actual pida dejar preparado. Todas las constantes van en `src/config.ts`. Si algo del documento es ambiguo, pregúntame antes de asumir. Al terminar, lista qué criterios de aceptación cumple el código y cómo probar cada uno.
+> Eres un desarrollador senior de videojuegos con Phaser 3 y TypeScript. Te adjunto el documento de especificaciones del juego; es la fuente de verdad. Trabajaremos una fase a la vez. No implementes nada de fases futuras salvo lo que la fase actual pida dejar preparado. Todas las constantes van en `src/config.ts`. Si algo del documento es ambiguo, pregúntame antes de asumir. Sigue `DISENO.md`. Todo color, posición de UI, capa y tiempo visual sale de `src/theme.ts`; no escribas valores hexadecimales ni coordenadas de UI sueltas. Al terminar, lista qué criterios de aceptación cumple el código y cómo probar cada uno.
 
 **Fase 0:**
 > Implementa la Fase 0 (sección 7): crea el proyecto Vite + TypeScript + Phaser 3 con la estructura de carpetas de la sección 3, la configuración de resolución pixel-perfect, todas las escenas vacías con su navegación, el `SaveSystem` versionado y el `InputSystem` con acciones abstractas. Usa placeholders de color para todo.
@@ -574,3 +574,7 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | 2026-10-10 | Carriles del Glitch | Bajo = nivel del suelo (se salta); alto = altura de la cabeza (se agacha). |
 | 2026-10-10 | Idioma | Código e identificadores en inglés; textos del juego en español. |
 | 2026-10-10 | Motor | Phaser 3 (última versión 3.x). |
+| 2026-10-11 | Estándar de diseño | Se adopta `DISENO.md` + `src/theme.ts` (tokens visuales) y los assets de `public/assets/` (`manifest.json`). La pantalla de referencia en `screens/` manda en caso de duda. |
+| 2026-10-11 | Posición del jugador | x = 64 es el borde izquierdo del frame del personaje (DISENO §3). |
+| 2026-10-11 | Renderizador | WebGL obligatorio: NineSlice (botones, paneles) y el tinte de BitmapText lo requieren. |
+| 2026-10-11 | Personaje por defecto | Piel 1, sudadera cian, cabello picudo negro, audífonos, blaster (el de las pantallas de referencia). |

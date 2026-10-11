@@ -1,17 +1,25 @@
 import Phaser from 'phaser';
-import { GAME, LAYOUT, PLACEHOLDERS, PLAYER, UI } from '../config';
+import { PLAYER } from '../config';
+import { Backdrop } from '../entities/Backdrop';
+import { CharacterSprite } from '../entities/CharacterSprite';
 import { InputSystem } from '../systems/InputSystem';
-import { addText } from '../ui/text';
-import { TextButton } from '../ui/TextButton';
+import { saveSystem } from '../systems/SaveSystem';
+import { DEPTH, LAYOUT, SCREEN } from '../theme';
+import { Button } from '../ui/Button';
+import { Hud } from '../ui/Hud';
 import { fadeIn, fadeToScene } from '../ui/transitions';
 import { SceneKey } from './keys';
 
 export interface GameOverData {
   score: number;
   distance: number;
+  enemies: number;
+  coins: number;
+  previousBest: number;
+  newRecord: boolean;
 }
 
-/** Main gameplay scene; orchestrates the systems. Placeholder content in Phase 0. */
+/** Main gameplay scene; orchestrates the systems. Static scenery in Phase 0 (movement arrives in Phase 2). */
 export class GameScene extends Phaser.Scene {
   private inputSystem!: InputSystem;
 
@@ -23,16 +31,16 @@ export class GameScene extends Phaser.Scene {
     fadeIn(this);
     this.inputSystem = new InputSystem(this);
 
-    const { tileSize, groundY, width } = GAME;
-    this.add.tileSprite(0, groundY, width, tileSize, PLACEHOLDERS.groundTop.key).setOrigin(0);
-    this.add.tileSprite(0, groundY + tileSize, width, tileSize, PLACEHOLDERS.groundFill.key).setOrigin(0);
-    this.add.image(PLAYER.x, groundY, PLACEHOLDERS.player.key).setOrigin(0.5, 1);
+    new Backdrop(this, 1, { useDepth: true });
+    new CharacterSprite(this, PLAYER.x, SCREEN.groundY, saveSystem.data.character).setDepth(DEPTH.player).play('run');
+    new Hud(this, saveSystem.data.bestScore, () => this.openPause());
 
-    const { infoY } = LAYOUT.game;
-    addText(this, UI.margin, infoY, 'Fase 0', { color: UI.mutedColor, originX: 0 });
-    new TextButton(this, width - UI.margin * 2, infoY, 'II', () => this.openPause());
-    // Temporary until death exists (Phase 4): lets us reach GameOver.
-    new TextButton(this, width / 2, infoY, '[debug] Terminar', () => this.endRun());
+    // Temporary until death exists (Phase 4): lets us reach GameOver. Development builds only.
+    if (import.meta.env.DEV) {
+      new Button(this, LAYOUT.game.debugEnd, { label: 'FIN (DEBUG)', onClick: () => this.endRun() }).setDepth(
+        DEPTH.hud,
+      );
+    }
 
     this.game.events.on(Phaser.Core.Events.BLUR, this.openPause, this);
     this.game.events.on(Phaser.Core.Events.HIDDEN, this.openPause, this);
@@ -54,7 +62,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   private endRun(): void {
-    const data: GameOverData = { score: 0, distance: 0 };
+    const best = saveSystem.data.bestScore;
+    const data: GameOverData = { score: 0, distance: 0, enemies: 0, coins: 0, previousBest: best, newRecord: false };
     fadeToScene(this, SceneKey.GameOver, data);
   }
 }

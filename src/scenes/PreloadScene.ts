@@ -1,26 +1,30 @@
 import Phaser from 'phaser';
-import { GAME, PLACEHOLDERS } from '../config';
+import { MANIFEST_KEY, MANIFEST_URL, queueManifest, type AssetManifest } from '../assets';
+import { COLOR, LAYOUT } from '../theme';
 import { SceneKey } from './keys';
 
-/** Loads assets. Until real art exists, generates colored placeholder textures (spec §3). */
+/** Loads the manifest, then every asset it lists, with a progress bar. */
 export class PreloadScene extends Phaser.Scene {
   constructor() {
     super(SceneKey.Preload);
   }
 
-  create(): void {
-    const { player, groundTop, groundFill } = PLACEHOLDERS;
-    this.makeRect(player.key, player.width, player.height, player.color);
-    this.makeRect(groundTop.key, GAME.tileSize, GAME.tileSize, groundTop.color);
-    this.makeRect(groundFill.key, GAME.tileSize, GAME.tileSize, groundFill.color);
-    this.scene.start(SceneKey.Menu);
+  preload(): void {
+    const { x, y, w, h } = LAYOUT.preload.bar;
+    this.add.rectangle(x, y, w, h, COLOR.surface).setOrigin(0);
+    const fill = this.add.rectangle(x, y, 0, h, COLOR.accent).setOrigin(0);
+    this.load.on(Phaser.Loader.Events.PROGRESS, (progress: number) => {
+      fill.width = Math.round(w * progress);
+    });
+
+    this.load.json(MANIFEST_KEY, MANIFEST_URL);
+    this.load.once(
+      `${Phaser.Loader.Events.FILE_KEY_COMPLETE}json-${MANIFEST_KEY}`,
+      (_key: string, _type: string, manifest: AssetManifest) => queueManifest(this.load, manifest),
+    );
   }
 
-  private makeRect(key: string, width: number, height: number, color: number): void {
-    if (this.textures.exists(key)) return;
-    const graphics = this.make.graphics({}, false);
-    graphics.fillStyle(color).fillRect(0, 0, width, height);
-    graphics.generateTexture(key, width, height);
-    graphics.destroy();
+  create(): void {
+    this.scene.start(SceneKey.Menu);
   }
 }

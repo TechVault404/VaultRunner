@@ -1,16 +1,21 @@
 import Phaser from 'phaser';
-import { GAME, LAYOUT, PLACEHOLDERS, UI } from '../config';
+import { Backdrop } from '../entities/Backdrop';
+import { CharacterSprite } from '../entities/CharacterSprite';
 import { InputSystem } from '../systems/InputSystem';
 import { saveSystem } from '../systems/SaveSystem';
+import { COLOR, fmtNumber, LAYOUT, SCREEN, UI } from '../theme';
+import { Button } from '../ui/Button';
 import { ButtonList } from '../ui/ButtonList';
-import { addText } from '../ui/text';
-import { TextButton } from '../ui/TextButton';
+import { addOverlay, addPanel } from '../ui/panels';
+import { pixelText } from '../ui/text';
 import { fadeIn, fadeToScene } from '../ui/transitions';
 import { SceneKey } from './keys';
 
+/** Reference: screens/01_menu.png */
 export class MenuScene extends Phaser.Scene {
   private inputSystem!: InputSystem;
   private buttons!: ButtonList;
+  private backdrop!: Backdrop;
 
   constructor() {
     super(SceneKey.Menu);
@@ -19,46 +24,62 @@ export class MenuScene extends Phaser.Scene {
   create(): void {
     fadeIn(this);
     this.inputSystem = new InputSystem(this);
-    const centerX = GAME.width / 2;
     const layout = LAYOUT.menu;
+    const save = saveSystem.data;
 
-    addText(this, centerX, layout.titleY, 'VAULT RUNNER', { size: UI.fontSizeTitle, color: UI.titleColor });
-    addText(this, centerX, layout.recordY, `Récord: ${saveSystem.data.bestScore}`, { color: UI.mutedColor });
+    this.backdrop = new Backdrop(this, 1);
+    addOverlay(this, UI.overlay.menu);
 
-    // Character preview placeholder (animated preview arrives in Phase 1).
-    this.add.image(centerX, layout.previewY, PLACEHOLDERS.player.key);
+    const logo = this.add.image(0, layout.logo.y, 'logo').setOrigin(0);
+    logo.x = Math.round(SCREEN.cx - logo.width / 2);
 
-    const startY = layout.buttonsY;
-    const soundButton = new TextButton(this, centerX, startY + UI.buttonSpacing * 2, '', () => {
-      const enabled = !this.isSoundOn();
-      saveSystem.update((data) => {
-        data.settings.music = enabled;
-        data.settings.sfx = enabled;
-      });
-      soundButton.setLabel(this.soundLabel());
+    new CharacterSprite(this, layout.character.x, SCREEN.groundY, save.character, layout.character.scale).play('run');
+    if (save.character.name) pixelText(this, layout.name.x, layout.name.y, save.character.name, { align: 'center' });
+
+    const { panel, labelY, valueY } = layout.record;
+    addPanel(this, panel);
+    pixelText(this, SCREEN.cx, labelY, 'RÉCORD', { color: COLOR.textMuted, align: 'center' });
+    pixelText(this, SCREEN.cx, valueY, fmtNumber(save.bestScore), { color: COLOR.record, align: 'center' });
+
+    const play = new Button(this, layout.play, {
+      label: 'JUGAR',
+      icon: 'play',
+      onClick: () => fadeToScene(this, SceneKey.Game),
     });
-    soundButton.setLabel(this.soundLabel());
-
-    this.buttons = new ButtonList(this.inputSystem, [
-      new TextButton(this, centerX, startY, 'Jugar', () => fadeToScene(this, SceneKey.Game)),
-      new TextButton(this, centerX, startY + UI.buttonSpacing, 'Personaje', () =>
-        fadeToScene(this, SceneKey.CharacterEditor),
-      ),
-      soundButton,
-    ]);
+    const character = new Button(this, layout.characterButton, {
+      label: 'PERSONAJE',
+      onClick: () => fadeToScene(this, SceneKey.CharacterEditor),
+    });
+    this.buttons = new ButtonList(this.inputSystem, [play, character, ...this.createSettingsButtons()]);
   }
 
-  update(): void {
+  update(_time: number, delta: number): void {
     this.inputSystem.update();
     this.buttons.update();
+    this.backdrop.scroll((LAYOUT.menu.scrollSpeed * delta) / 1000);
   }
 
-  private isSoundOn(): boolean {
-    const { music, sfx } = saveSystem.data.settings;
-    return music && sfx;
-  }
+  /** Music, sound and fullscreen icon buttons, top-right (DISENO §7.3). */
+  private createSettingsButtons(): Button[] {
+    const { x, y, step, size } = LAYOUT.menu.settings;
+    const at = (i: number) => ({ x: x + i * step, y, w: size, h: size });
+    const settings = () => saveSystem.data.settings;
 
-  private soundLabel(): string {
-    return `Sonido: ${this.isSoundOn() ? 'Sí' : 'No'}`;
+    const music: Button = new Button(this, at(0), {
+      icon: settings().music ? 'music_on' : 'music_off',
+      onClick: () => {
+        saveSystem.update((data) => void (data.settings.music = !data.settings.music));
+        music.setIcon(settings().music ? 'music_on' : 'music_off');
+      },
+    });
+    const sound: Button = new Button(this, at(1), {
+      icon: settings().sfx ? 'sound_on' : 'sound_off',
+      onClick: () => {
+        saveSystem.update((data) => void (data.settings.sfx = !data.settings.sfx));
+        sound.setIcon(settings().sfx ? 'sound_on' : 'sound_off');
+      },
+    });
+    const fullscreen = new Button(this, at(2), { icon: 'fullscreen', onClick: () => this.scale.toggleFullscreen() });
+    return [music, sound, fullscreen];
   }
 }

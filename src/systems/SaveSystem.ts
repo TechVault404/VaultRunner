@@ -1,6 +1,6 @@
-import { SAVE } from '../config';
+import { CHARACTER, SAVE } from '../config';
 
-/** Character built in the editor (spec §8). Option ranges are validated in Phase 1. */
+/** Character built in the editor (spec §8). Each number is an option index. */
 export interface CharacterConfig {
   skin: number;
   outfit: number;
@@ -25,8 +25,19 @@ export interface SaveData {
 export type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
 export function createDefaultCharacter(): CharacterConfig {
-  return { skin: 0, outfit: 0, outfitColor: 0, hair: 0, hairColor: 0, accessory: 0, weapon: 0, name: '' };
+  return { skin: 1, outfit: 1, outfitColor: 4, hair: 2, hairColor: 0, accessory: 3, weapon: 0, name: '' };
 }
+
+/** Number of options per index field of CharacterConfig. */
+const CHARACTER_OPTION_COUNTS: Record<Exclude<keyof CharacterConfig, 'name'>, number> = {
+  skin: CHARACTER.skins,
+  outfit: CHARACTER.outfits,
+  outfitColor: CHARACTER.outfitColors,
+  hair: CHARACTER.hairs,
+  hairColor: CHARACTER.hairColors,
+  accessory: CHARACTER.accessories,
+  weapon: CHARACTER.weapons,
+};
 
 export function createDefaultSave(): SaveData {
   return {
@@ -53,9 +64,9 @@ function isNonNegative(value: unknown): value is number {
 
 function isCharacter(value: unknown): value is CharacterConfig {
   if (!isRecord(value)) return false;
-  const indexKeys = ['skin', 'outfit', 'outfitColor', 'hair', 'hairColor', 'accessory', 'weapon'] as const;
+  const counts = Object.entries(CHARACTER_OPTION_COUNTS);
   return (
-    indexKeys.every((key) => isIndex(value[key])) &&
+    counts.every(([key, count]) => isIndex(value[key]) && (value[key] as number) < count) &&
     typeof value.name === 'string' &&
     value.name.length <= SAVE.nameMaxLength
   );

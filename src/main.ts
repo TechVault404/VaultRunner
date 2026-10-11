@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME } from './config';
+import { INPUT } from './config';
 import { BootScene } from './scenes/BootScene';
 import { CharacterEditorScene } from './scenes/CharacterEditorScene';
 import { GameOverScene } from './scenes/GameOverScene';
@@ -7,13 +7,15 @@ import { GameScene } from './scenes/GameScene';
 import { MenuScene } from './scenes/MenuScene';
 import { PauseScene } from './scenes/PauseScene';
 import { PreloadScene } from './scenes/PreloadScene';
+import { COLOR, SCREEN } from './theme';
 
 const game = new Phaser.Game({
-  type: Phaser.AUTO,
+  // WebGL: NineSlice (buttons, panels) and BitmapText tint require it.
+  type: Phaser.WEBGL,
   parent: 'game',
-  width: GAME.width,
-  height: GAME.height,
-  backgroundColor: GAME.backgroundColor,
+  width: SCREEN.w,
+  height: SCREEN.h,
+  backgroundColor: COLOR.bg,
   pixelArt: true,
   roundPixels: true,
   scale: {
@@ -26,7 +28,7 @@ const game = new Phaser.Game({
   },
   input: {
     gamepad: true,
-    activePointers: GAME.activePointers,
+    activePointers: INPUT.activePointers,
   },
   scene: [BootScene, PreloadScene, MenuScene, CharacterEditorScene, GameScene, PauseScene, GameOverScene],
 });

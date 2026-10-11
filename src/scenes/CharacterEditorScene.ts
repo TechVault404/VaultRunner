@@ -1,13 +1,17 @@
 import Phaser from 'phaser';
-import { GAME, LAYOUT, UI } from '../config';
+import { Backdrop } from '../entities/Backdrop';
+import { CharacterSprite } from '../entities/CharacterSprite';
 import { InputSystem } from '../systems/InputSystem';
+import { saveSystem } from '../systems/SaveSystem';
+import { COLOR, LAYOUT, SCREEN, UI } from '../theme';
+import { Button } from '../ui/Button';
 import { ButtonList } from '../ui/ButtonList';
-import { addText } from '../ui/text';
-import { TextButton } from '../ui/TextButton';
+import { addOverlay, addPanel } from '../ui/panels';
+import { pixelText } from '../ui/text';
 import { fadeIn, fadeToScene } from '../ui/transitions';
 import { SceneKey } from './keys';
 
-/** Character editor — implemented in Phase 1. */
+/** Reference: screens/02_editor.png — only the frame and preview for now; the editor arrives in Phase 1. */
 export class CharacterEditorScene extends Phaser.Scene {
   private inputSystem!: InputSystem;
   private buttons!: ButtonList;
@@ -19,19 +23,32 @@ export class CharacterEditorScene extends Phaser.Scene {
   create(): void {
     fadeIn(this);
     this.inputSystem = new InputSystem(this);
-    const centerX = GAME.width / 2;
-    const layout = LAYOUT.characterEditor;
+    const layout = LAYOUT.editor;
 
-    addText(this, centerX, layout.titleY, 'PERSONAJE', { size: UI.fontSizeTitle, color: UI.titleColor });
-    addText(this, centerX, layout.noteY, '(Editor: Fase 1)', { color: UI.mutedColor });
+    new Backdrop(this, 4, { layers: ['far'], ground: false });
+    addOverlay(this, UI.overlay.editor);
+    pixelText(this, SCREEN.cx, layout.title.y, 'TU PERSONAJE', { align: 'center' });
 
-    const back = () => fadeToScene(this, SceneKey.Menu);
-    this.buttons = new ButtonList(this.inputSystem, [new TextButton(this, centerX, layout.backY, 'Volver', back)]);
+    const { panel, x, feetY, scale } = layout.preview;
+    addPanel(this, panel);
+    new CharacterSprite(this, x, feetY, saveSystem.data.character, scale).play('run');
+    pixelText(this, SCREEN.cx, layout.note.y, 'EDITOR: FASE 1', {
+      color: COLOR.textDisabled,
+      shadow: null,
+      align: 'center',
+    });
+
+    const back = new Button(this, layout.back, { label: 'MENÚ', icon: 'home', onClick: () => this.back() });
+    this.buttons = new ButtonList(this.inputSystem, [back]);
   }
 
   update(): void {
     this.inputSystem.update();
     this.buttons.update();
-    if (this.inputSystem.justPressed('uiBack')) fadeToScene(this, SceneKey.Menu);
+    if (this.inputSystem.justPressed('uiBack')) this.back();
+  }
+
+  private back(): void {
+    fadeToScene(this, SceneKey.Menu);
   }
 }
