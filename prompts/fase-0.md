@@ -34,7 +34,7 @@ Todas quedaron registradas en la sección 18 del documento.
 
 ## Ajuste: estándar de diseño
 
-Después de la primera versión se agregaron `DISENO.md`, `src/theme.ts`, `ASSETS.md`, los assets en `public/assets/`, `screens/`, `docs/diseno/` y `tools/assets/`.
+Después de la primera versión se agregaron `DISENO.md`, `src/theme.ts`, `ASSETS.md`, los assets en `public/assets/`, `screens/` y `docs/diseno/`. Los scripts generadores (`tools/`) quedan fuera del repositorio.
 
 > See the things I added? I've also added a @DISENO.md. Follow the design for this phase 0
 

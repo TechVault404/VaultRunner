@@ -142,7 +142,7 @@ export const fmtScoreHud = (n: number) => String(Math.floor(n)).padStart(HUD.sco
 export const fmtNumber = (n: number) => Math.floor(n).toLocaleString('es-MX'); // 12,480
 export const fmtDistance = (m: number) => `${fmtNumber(m)} M`;
 
-// ─── Composición de pantallas (coordenadas de screens/*.png, ver tools/assets/screens.py) ──
+// ─── Composición de pantallas (coordenadas de screens/*.png) ──
 type Box = { x: number; y: number; w: number; h: number };
 const box = (x: number, y: number, w: number, h: number): Box => ({ x, y, w, h });
 
