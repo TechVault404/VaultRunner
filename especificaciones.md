@@ -10,9 +10,9 @@
 
 ## 1. Cómo usar este documento
 
-1. Al iniciar cada sesión con la IA, pega o adjunta este documento completo y después el prompt de la fase correspondiente (sección 13).
+1. Al iniciar cada sesión con la IA, pega o adjunta este documento completo y después el prompt de la fase correspondiente (sección 14).
 2. Se trabaja **una fase a la vez**. No se avanza hasta cumplir todos los criterios de aceptación de la fase.
-3. Cada fase termina con un commit y una etiqueta en git (`fase-0`, `fase-1`, …) para poder mostrar el progreso en el video y compartir el repositorio.
+3. Flujo de git: cada fase se trabaja en una rama `fase-N/<nombre-corto>` creada desde `develop`. Al cumplir los criterios de aceptación se abre un PR hacia `develop`, se revisa y se fusiona; después se etiqueta `develop` con `fase-N` (`fase-0`, `fase-1`, …) para poder mostrar el progreso en el video y compartir el repositorio. `main` es solo para releases y se gestiona manualmente.
 4. Todos los prompts usados se guardan en `/prompts` dentro del repositorio (sección 14), porque al final del video se ofrece compartir el repo y los prompts.
 
 ### Mapa de fases (alineado con el guion)
@@ -85,7 +85,7 @@ README.md
 ```
 
 ### Reglas de código para la IA
-- Ningún número "mágico" fuera de `config.ts`.
+- Ningún número "mágico" fuera de `config.ts` (balance) y `src/theme.ts` (visual). Todo lo visual sigue `DISENO.md`.
 - Cada sistema es una clase independiente que la escena `Game` orquesta.
 - Lógica de juego separada del render cuando sea posible (para poder probarla).
 - Usar *object pools* para proyectiles, enemigos, obstáculos y monedas.
@@ -244,7 +244,7 @@ interface CharacterConfig {
 - Doble salto **solo** con el powerup correspondiente (Fase 5); dejar la lógica preparada (`maxJumps` configurable).
 
 ### Agacharse
-- En el suelo: cambia a animación agachado y la hitbox baja a **16 × 14** (anclada al suelo). Se mantiene mientras se mantenga el botón.
+- En el suelo: cambia a animación agachado (sprite 16 × 14) y la hitbox baja a **12 × 10** (anclada al suelo; ver regla de hitboxes). Se mantiene mientras se mantenga el botón.
 - En el aire: **caída rápida** (velocidad vertical = +450 px/s inmediatamente). Al tocar el suelo, si se sigue manteniendo, queda agachado.
 - No se puede saltar estando agachado sin soltar primero (o al presionar saltar se cancela el agachado y se salta; elegir esta segunda opción por fluidez).
 
@@ -261,7 +261,7 @@ interface CharacterConfig {
 - Los proyectiles dañan enemigos; **no** destruyen obstáculos (para que esquivar siga importando).
 
 ### Hitboxes
-- La hitbox del jugador es 2 px más pequeña que el sprite por cada lado (perdona roces visuales).
+- La hitbox del jugador es 2 px más pequeña que el sprite por cada lado (perdona roces visuales): **12 × 20** de pie y **12 × 10** agachado.
 - Modo debug (tecla F1 en desarrollo) que dibuja hitboxes.
 
 ### Criterios de aceptación
@@ -304,7 +304,7 @@ El mundo avanza por zonas según la distancia. Al cambiar de zona hay una transi
 | Torreta eliminada | +100 |
 | Esquive cerrado (pasar a ≤ 4 px de un obstáculo) | +5 (opcional, con texto flotante) |
 
-- Multiplicador por powerup ×2 (Fase 5) aplicado a todo lo ganado mientras dure.
+- Multiplicador por powerup ×2 (Fase 5) aplicado a **todo** lo ganado mientras dure, incluidos los puntos por distancia.
 - Textos flotantes "+50" al ganar puntos por acciones.
 - **Récord personal (requisito del guion):** al terminar cada run se compara con `bestScore`; si se supera, se guarda inmediatamente en `localStorage`, se muestra "¡NUEVO RÉCORD!" y se reproduce un jingle especial. También se guarda `bestDistance`.
 - Durante la partida, cuando el puntaje actual supera al récord, el récord del HUD parpadea y aparece "¡Récord superado!" una sola vez.
@@ -362,7 +362,7 @@ El mundo avanza por zonas según la distancia. Al cambiar de zona hay una transi
 | Bug terrestre | 1 disparo | Camina hacia el jugador a +30 px/s sobre la velocidad del mundo | 100 m | 50 |
 | Dron volador | 1 disparo | Vuela en onda senoidal (amplitud 20 px, periodo 1.5 s) a altura media | 400 m | 50 |
 | Torreta | 3 disparos | Fija en el suelo; dispara una bala lenta (150 px/s) a la altura del jugador, con aviso visual (parpadeo) 600 ms antes | 1,000 m | 100 |
-| Glitch (élite) | 2 disparos | Se teletransporta una vez entre carril alto y bajo; aviso de 400 ms | 2,000 m | 150 |
+| Glitch (élite) | 2 disparos | Se teletransporta una vez entre carril alto y bajo (bajo = a nivel del suelo, se esquiva saltando; alto = a la altura de la cabeza, se esquiva agachándose); aviso de 400 ms | 2,000 m | 150 |
 
 - Al recibir daño: parpadeo blanco 80 ms. Al morir: explosión de partículas pixel de 300 ms.
 - Las balas enemigas se esquivan saltando o agachándose; no se pueden destruir con disparos (versión 1).
@@ -399,9 +399,9 @@ El mundo avanza por zonas según la distancia. Al cambiar de zona hay una transi
 | Escudo | Burbuja azul | Absorbe 1 golpe; al romperse da 1 s de invulnerabilidad (parpadeo) | Hasta recibir un golpe o 15 s |
 | Imán | Imán rojo | Atrae monedas en un radio de 80 px | 10 s |
 | Doble salto | Botas con alas | Permite un segundo salto en el aire | 12 s |
-| Disparo triple | Tres flechas | Cada disparo lanza 3 proyectiles en abanico (−10°, 0°, +10°) y el cooldown baja a 200 ms | 8 s |
+| Disparo triple | Tres flechas | Cada disparo lanza 3 proyectiles en abanico (−10°, 0°, +10°), el cooldown baja a 200 ms y el máximo de proyectiles en pantalla sube de 3 a 9 | 8 s |
 | Puntos ×2 | "×2" dorado | Duplica todos los puntos ganados | 10 s |
-| Turbo | Rayo | Invulnerable, velocidad ×1.8 y avance automático de 150 m destruyendo lo que toca; al terminar, 1 s de invulnerabilidad | 3 s |
+| Turbo | Rayo | Invulnerable, velocidad ×1.8 durante exactamente 3 s destruyendo lo que toca (los enemigos destruidos dan sus puntos normales, ×2 si aplica, y cuentan en estadísticas); al terminar, 1 s de invulnerabilidad | 3 s |
 
 ### Reglas
 - Aparecen flotando con un leve movimiento vertical, en posiciones alcanzables, cada **250–400 m** (aleatorio), nunca dentro de un obstáculo.
@@ -477,7 +477,7 @@ El mundo avanza por zonas según la distancia. Al cambiar de zona hay una transi
 Cada prompt se envía **junto con este documento completo**. Guardar cada prompt usado (y sus correcciones) en `/prompts/fase-N.md`.
 
 **Prompt de sistema / contexto (al iniciar cada sesión):**
-> Eres un desarrollador senior de videojuegos con Phaser 3 y TypeScript. Te adjunto el documento de especificaciones del juego; es la fuente de verdad. Trabajaremos una fase a la vez. No implementes nada de fases futuras salvo lo que la fase actual pida dejar preparado. Todas las constantes van en `src/config.ts`. Si algo del documento es ambiguo, pregúntame antes de asumir. Al terminar, lista qué criterios de aceptación cumple el código y cómo probar cada uno.
+> Eres un desarrollador senior de videojuegos con Phaser 3 y TypeScript. Te adjunto el documento de especificaciones del juego; es la fuente de verdad. Trabajaremos una fase a la vez. No implementes nada de fases futuras salvo lo que la fase actual pida dejar preparado. Todas las constantes van en `src/config.ts`. Si algo del documento es ambiguo, pregúntame antes de asumir. Sigue `DISENO.md`. Todo color, posición de UI, capa y tiempo visual sale de `src/theme.ts`; no escribas valores hexadecimales ni coordenadas de UI sueltas. Al terminar, lista qué criterios de aceptación cumple el código y cómo probar cada uno.
 
 **Fase 0:**
 > Implementa la Fase 0 (sección 7): crea el proyecto Vite + TypeScript + Phaser 3 con la estructura de carpetas de la sección 3, la configuración de resolución pixel-perfect, todas las escenas vacías con su navegación, el `SaveSystem` versionado y el `InputSystem` con acciones abstractas. Usa placeholders de color para todo.
@@ -558,3 +558,23 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | "Enemigos y obstáculos" | Combate y esquives (tag `fase-4`) |
 | "Powerups" | Disparo triple y escudo (tag `fase-5`) |
 | "Este fue el resultado final" | Partida real en el teléfono con la persona jugando (tag `fase-6`) |
+
+---
+
+## 18. Registro de decisiones
+
+| Fecha | Tema | Decisión |
+|---|---|---|
+| 2026-10-10 | Flujo de git | Una rama `fase-N/<nombre>` por fase desde `develop`, PR hacia `develop`, etiqueta `fase-N` tras fusionar. `main` solo para releases manuales. |
+| 2026-10-10 | Hitbox agachado | 12 × 10 (sprite 16 × 14 menos 2 px por lado). De pie: 12 × 20. |
+| 2026-10-10 | Disparo triple | El máximo de proyectiles en pantalla sube de 3 a 9 mientras está activo (configurable). |
+| 2026-10-10 | Turbo | Dura exactamente 3 s a velocidad ×1.8; se elimina la cifra de 150 m. |
+| 2026-10-10 | Puntos con Turbo | Los enemigos destruidos por el Turbo dan sus puntos normales y cuentan en estadísticas. |
+| 2026-10-10 | Multiplicador ×2 | Se aplica a todo, incluida la distancia. |
+| 2026-10-10 | Carriles del Glitch | Bajo = nivel del suelo (se salta); alto = altura de la cabeza (se agacha). |
+| 2026-10-10 | Idioma | Código e identificadores en inglés; textos del juego en español. |
+| 2026-10-10 | Motor | Phaser 3 (última versión 3.x). |
+| 2026-10-11 | Estándar de diseño | Se adopta `DISENO.md` + `src/theme.ts` (tokens visuales) y los assets de `public/assets/` (`manifest.json`). La pantalla de referencia en `screens/` manda en caso de duda. |
+| 2026-10-11 | Posición del jugador | x = 64 es el borde izquierdo del frame del personaje (DISENO §3). |
+| 2026-10-11 | Renderizador | WebGL obligatorio: NineSlice (botones, paneles) y el tinte de BitmapText lo requieren. |
+| 2026-10-11 | Personaje por defecto | Piel 1, sudadera cian, cabello picudo negro, audífonos, blaster (el de las pantallas de referencia). |
