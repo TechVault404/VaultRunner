@@ -26,6 +26,8 @@ export const CHARACTER = {
   /** 0 = none (no layer drawn). */
   accessories: 5,
   weapons: 3,
+  /** Characters allowed in the name (upper case; must exist in the pixel font). */
+  nameCharset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÁÉÍÓÚÜÑ ',
 } as const;
 
 // ---------------------------------------------------------------------------

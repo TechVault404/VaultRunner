@@ -83,6 +83,8 @@ export const UI = {
   icon: 12,                           // icons.png, powerups.png
   touch: { size: 32, alpha: 0.55, margin: 8 },
   overlay: { menu: 0.25, editor: 0.45, banner: 0.6, pause: 0.65, gameOver: 0.7 },
+  selector: { h: 13, labelDx: 2, labelDy: -8, valueDy: 3, arrowLeftDx: 2, arrowRightInset: 13, arrowDy: 1 },
+  swatch: { light: 2, shade: 2, frame: 2 }, // filas de luz arriba, de sombra abajo, marco blanco de selección
 } as const;
 
 // ─── HUD (posiciones fijas) ──────────────────────────────────────────────
@@ -130,6 +132,7 @@ export const TIMING = {
   zoneBanner: { in: 250, hold: 1500, out: 250 },
   recordToast: 1500,
   invulnBlinkHz: 10,
+  cursorBlink: 400,         // medio periodo del cursor "_" del campo de nombre
   deathShake: 200, deathSlowMo: 600,
   powerupBob: { amplitude: 2, period: 1200 },
   menuIdleBob: { amplitude: 1, period: 800 },
@@ -160,9 +163,20 @@ export const LAYOUT = {
   },
   editor: {
     title: { y: 6 },
-    preview: { panel: box(118, 20, 84, 116), x: 128, feetY: 128, scale: 4 },
-    note: { y: 140 },
-    back: box(116, 150, 88, 18),
+    // Columna izquierda: selectores ◀ ▶ (piel, ropa, cabello, accesorio, arma)
+    selectors: { x: 6, y: 30, w: 104, step: 22 },
+    // Columna central: vista previa ×4 sobre una losa de suelo
+    preview: { panel: box(118, 20, 84, 116), x: 128, feetY: 120, scale: 4, floor: box(122, 118, 76, 14) },
+    name: { y: 124 },                             // nombre en ámbar bajo los pies
+    // Columna derecha: muestras de color y nombre
+    outfitColors: { x: 212, y: 31, w: 20, h: 10, cols: 4, colStep: 25, rowStep: 13 },
+    hairColors: { x: 212, y: 71, w: 28, h: 10, cols: 3, colStep: 33, rowStep: 13 },
+    swatchLabelDy: -9,
+    nameField: { box: box(210, 110, 105, 15), labelDx: 2, labelDy: -8, textDx: 6, textDy: 4 },
+    hint: { y: 140 },
+    random: box(6, 150, 92, 18),
+    reset: box(104, 150, 92, 18),
+    save: box(202, 150, 113, 18),
   },
   game: {
     debugEnd: box(130, 5, 60, 16),               // temporal hasta la Fase 4

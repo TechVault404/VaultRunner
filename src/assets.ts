@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import type { CharacterField } from './systems/CharacterOptions';
 
 /** Shape of public/assets/manifest.json (see ASSETS.md). */
 export interface AssetManifest {
@@ -13,7 +14,11 @@ export interface AssetManifest {
   images: { key: string; url: string }[];
   bitmapFonts: { key: string; textureURL: string; fontDataURL: string }[];
   notes: {
-    player: { animations: Record<PlayerAnim, { start: number; end: number }> };
+    player: {
+      animations: Record<PlayerAnim, { start: number; end: number }>;
+      /** Display name of each option, per CharacterConfig index field. */
+      options: Record<CharacterField, string[]>;
+    };
   };
 }
 

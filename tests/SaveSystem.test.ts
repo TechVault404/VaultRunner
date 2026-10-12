@@ -83,6 +83,13 @@ describe('SaveSystem', () => {
     expect(second.data.character.name).toBe('Ana');
   });
 
+  it('persists a custom character across reloads', () => {
+    const storage = memoryStorage();
+    const character = { skin: 3, outfit: 2, outfitColor: 6, hair: 0, hairColor: 5, accessory: 4, weapon: 2, name: 'PEÑA' };
+    new SaveSystem(storage).update((data) => void (data.character = character));
+    expect(new SaveSystem(storage).data.character).toEqual(character);
+  });
+
   it('starts from defaults when stored data is garbage', () => {
     const system = new SaveSystem(memoryStorage('not json at all'));
     expect(system.data).toEqual(createDefaultSave());
