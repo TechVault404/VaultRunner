@@ -10,6 +10,9 @@ export interface SwatchGrid {
   cols: number;
   colStep: number;
   rowStep: number;
+  /** Vertical band (relative to y) that the touch cells fill; keeps neighboring grids apart. */
+  hitTop: number;
+  hitBottom: number;
 }
 
 export interface SwatchesOptions {
@@ -45,11 +48,31 @@ export class Swatches extends Phaser.GameObjects.Container {
       const mid = scene.add.rectangle(x, y, w, h, PALETTE[midColor]).setOrigin(0);
       const top = scene.add.rectangle(x, y, w, light, PALETTE[lightColor]).setOrigin(0);
       const bottom = scene.add.rectangle(x, y + h - shade, w, shade, PALETTE[shadeColor]).setOrigin(0);
-      mid.setInteractive({ useHandCursor: true });
-      mid.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => options.onPick(i));
       this.add([mid, top, bottom]);
     });
+    this.addTouchZones(grid, options);
     scene.add.existing(this);
+  }
+
+  /**
+   * Swatch rows sit closer than UI.touchMin, so each swatch gets a touch cell larger than its
+   * drawing: columns are at least touchMin wide, and the grid's [hitTop, hitBottom] band is
+   * split between rows at the middle of each gap. Cells never overlap, within or across grids.
+   */
+  private addTouchZones({ w, h, cols, colStep, rowStep, hitTop, hitBottom }: SwatchGrid, options: SwatchesOptions): void {
+    const rows = Math.ceil(options.ramps.length / cols);
+    const cellW = Math.max(colStep, UI.touchMin);
+    const gapMiddle = (row: number) => row * rowStep - (rowStep - h) / 2;
+    const edge = (row: number) => (row === 0 ? hitTop : row === rows ? hitBottom : gapMiddle(row));
+    options.ramps.forEach((_, i) => {
+      const row = Math.floor(i / cols);
+      const zone = this.scene.add
+        .zone((i % cols) * colStep + (w - cellW) / 2, edge(row), cellW, edge(row + 1) - edge(row))
+        .setOrigin(0)
+        .setInteractive({ useHandCursor: true });
+      zone.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => options.onPick(i));
+      this.add(zone);
+    });
   }
 
   setSelected(index: number): this {

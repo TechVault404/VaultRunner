@@ -74,7 +74,7 @@ El juego está pensado para jugarse **en celular o en PC** con la misma calidad.
 **Pantallas objetivo**
 | Dispositivo | Tamaño de referencia (CSS px) | Orientación |
 |---|---|---|
-| Teléfono pequeño | 568 × 320 (iPhone SE) | Horizontal |
+| Teléfono pequeño | 667 × 375 (iPhone SE 2.ª/3.ª gen.) | Horizontal |
 | Teléfono moderno | 915 × 412 (Android), 932 × 430 (iPhone) | Horizontal |
 | Tableta | 1024 × 768 | Horizontal |
 | PC | 1280 × 720 hasta 2560 × 1440, ventana de cualquier tamaño | — |
@@ -82,9 +82,10 @@ El juego está pensado para jugarse **en celular o en PC** con la misma calidad.
 **Reglas**
 - **Un solo diseño que escala.** Toda la UI se compone sobre el lienzo lógico de 320 × 180 y se escala con `Scale.FIT`; no hay layouts separados para móvil y PC. En relaciones de aspecto distintas a 16:9 (19.5:9, 4:3, 16:10) aparecen bandas de `COLOR.bg`, pero nunca se recorta ni se deforma nada.
 - **Redimensionar y girar en vivo.** Cambiar el tamaño de la ventana, girar el teléfono, entrar o salir de pantalla completa, o que aparezca la barra del navegador, se resuelve al momento, sin recargar y sin perder el estado.
-- **Zonas seguras.** En teléfonos con notch o barra de inicio, el lienzo respeta `env(safe-area-inset-*)`. Nada interactivo queda bajo el notch ni en los bordes del sistema.
+- **Zonas seguras.** En teléfonos con notch o barra de inicio, el lienzo respeta `env(safe-area-inset-*)` (padding del `body` en `index.html`). Nada interactivo queda bajo el notch ni en los bordes del sistema.
+- **Ayudas según el dispositivo.** Las ayudas de teclado ("ENTER ELEGIR", etc.) solo se muestran cuando el jugador usa teclado o gamepad (`InputSystem.lastDevice`).
 - **Paridad de entrada.** Cada pantalla se puede usar completa **solo con el dedo** y **solo con teclado y mouse** (gamepad opcional). Nada depende del *hover*; todo lo que se haga con mouse funciona con un toque.
-- **Objetivos táctiles ≥ 44 × 44 px reales** en el teléfono más pequeño de la tabla. Si un control lógico queda más chico, se amplía su área táctil, no el dibujo.
+- **Áreas táctiles de al menos 22 × 22 px lógicos** (`UI.touchMin`), que son ≥ 44 × 44 px reales con el lienzo a ×2 o más (pantallas desde 640 × 360). Si un control se dibuja más chico, se amplía su área táctil con `setTouchArea` (`src/ui/touch.ts`), no el dibujo. Cuando los controles están más juntos que 22 px (p. ej., las muestras de color), el espacio disponible se reparte entre ellos sin solapes, aunque alguna área quede algo por debajo del mínimo (las muestras del editor quedan en 20–22 px lógicos).
 - **Legibilidad.** Todo texto y todo icono se lee en el teléfono pequeño a distancia normal de juego.
 - **Teclado del teléfono.** Cuando aparece el teclado virtual (p. ej., el nombre en el editor), la pantalla no se rompe ni queda desplazada al cerrarlo.
 - **Sin comportamientos del navegador.** En el lienzo no hay zoom con doble toque ni pellizco, ni scroll, ni rebote, ni menú contextual, ni selección de texto.
@@ -92,7 +93,7 @@ El juego está pensado para jugarse **en celular o en PC** con la misma calidad.
 
 **Criterios transversales de aceptación (en cada fase)**
 - [ ] Lo nuevo de la fase funciona en una ventana de PC, incluso al redimensionarla mientras se usa.
-- [ ] Lo nuevo de la fase funciona en la emulación de dispositivos de las DevTools con táctil, al menos en 568 × 320 y 915 × 412 en horizontal.
+- [ ] Lo nuevo de la fase funciona en la emulación de dispositivos de las DevTools con táctil, al menos en 667 × 375 y 915 × 412 en horizontal.
 - [ ] Ningún control queda inaccesible solo con táctil ni solo con teclado y mouse.
 - [ ] Cuando la fase toca UI o controles, también se prueba en un teléfono real.
 
@@ -612,4 +613,5 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | 2026-10-12 | Salir del editor | Esc vuelve al menú sin guardar; solo GUARDAR Y JUGAR guarda el personaje. |
 | 2026-10-12 | Sonidos de interfaz | Se adelantan a la Fase 1 los clics de UI de §13.1 (mover foco, cambiar opción, confirmar, cancelar, aleatorio, restablecer, escribir). Respetan el interruptor de efectos y hay una sola instancia por sonido. |
 | 2026-10-12 | Diseño responsivo | Requisito transversal: el juego se juega en celular y en PC. Cada fase cumple las reglas y criterios de la sección 3 "Diseño responsivo" y el prompt de sistema lo recuerda. |
+| 2026-10-12 | Áreas táctiles | Mínimo 22 px lógicos (≥ 44 px reales desde escala ×2). El teléfono pequeño de referencia es 667 × 375: en 568 × 320 las filas del editor, a 22 px como en la referencia, no alcanzan 44 px reales. |
 | 2026-10-12 | Nombre del personaje | Solo caracteres de la fuente pixel (A–Z, 0–9, ÁÉÍÓÚÜÑ, espacio), en mayúsculas, máx. 10. |

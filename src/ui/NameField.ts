@@ -5,6 +5,7 @@ import { sanitizeName } from '../systems/CharacterOptions';
 import { COLOR, LAYOUT, TIMING } from '../theme';
 import { addPanel } from './panels';
 import { PixelText } from './text';
+import { setTouchArea } from './touch';
 
 export interface NameFieldOptions {
   onChange: (name: string) => void;
@@ -36,7 +37,7 @@ export class NameField extends Phaser.GameObjects.Container {
     this.add([this.label, panel, this.text]);
 
     // Focus inside the native pointer handler: mobile browsers only open the keyboard from a user gesture.
-    panel.setInteractive({ useHandCursor: true });
+    setTouchArea(panel);
     panel.on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
       options.onFocus();
       this.startEditing();
@@ -88,6 +89,8 @@ export class NameField extends Phaser.GameObjects.Container {
     if (!this.editingName) return;
     this.editingName = false;
     this.element.blur();
+    // iOS can leave the page scrolled after the on-screen keyboard closes.
+    window.scrollTo(0, 0);
     this.setKeyboardEnabled(true);
     const trimmed = this.value.trim();
     if (trimmed !== this.value) this.options.onChange(trimmed);

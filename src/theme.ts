@@ -81,6 +81,7 @@ export const UI = {
   button: { h: 16, hPrimary: 18, minW: 60, padX: 8, iconGap: 3, pressedOffsetY: 1, stackGap: 4 },
   panel: { pad: 8 },
   icon: 12,                           // icons.png, powerups.png
+  touchMin: 22,                       // área táctil mínima: ≥ 44 px reales con el lienzo a ×2 (pantallas ≥ 640 × 360)
   touch: { size: 32, alpha: 0.55, margin: 8 },
   overlay: { menu: 0.25, editor: 0.45, banner: 0.6, pause: 0.65, gameOver: 0.7 },
   selector: { h: 13, labelDx: 2, labelDy: -8, valueDy: 3, arrowLeftDx: 2, arrowRightInset: 13, arrowDy: 1 },
@@ -169,8 +170,9 @@ export const LAYOUT = {
     preview: { panel: box(118, 20, 84, 116), x: 128, feetY: 120, scale: 4, floor: box(122, 118, 76, 14) },
     name: { y: 124 },                             // nombre en ámbar bajo los pies
     // Columna derecha: muestras de color y nombre
-    outfitColors: { x: 212, y: 31, w: 20, h: 10, cols: 4, colStep: 25, rowStep: 13 },
-    hairColors: { x: 212, y: 71, w: 28, h: 10, cols: 3, colStep: 33, rowStep: 13 },
+    // hitTop/hitBottom: franja táctil de la rejilla (relativa a y); las dos franjas se tocan en y = 62 sin solaparse
+    outfitColors: { x: 212, y: 31, w: 20, h: 10, cols: 4, colStep: 25, rowStep: 13, hitTop: -11, hitBottom: 31 },
+    hairColors: { x: 212, y: 71, w: 28, h: 10, cols: 3, colStep: 33, rowStep: 13, hitTop: -9, hitBottom: 33 },
     swatchLabelDy: -9,
     nameField: { box: box(210, 110, 105, 15), labelDx: 2, labelDy: -8, textDx: 6, textDy: 4 },
     hint: { y: 140 },

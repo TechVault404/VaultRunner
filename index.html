@@ -13,6 +13,7 @@
         padding: 0;
         width: 100%;
         height: 100%;
+        height: 100dvh; /* follows the mobile address bar */
         overflow: hidden;
         background: #000;
         touch-action: none;
@@ -20,6 +21,16 @@
         -webkit-user-select: none;
         -webkit-touch-callout: none;
         overscroll-behavior: none;
+      }
+      /* Keep the canvas out of the notch and home bar (spec §3 "Diseño responsivo"). */
+      body {
+        box-sizing: border-box;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
+      /* The hidden name field must stay editable (Safari ignores typing when user-select is none). */
+      input {
+        user-select: text;
+        -webkit-user-select: text;
       }
       #game {
         width: 100%;

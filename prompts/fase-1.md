@@ -34,3 +34,13 @@ La IA generó 7 sonidos chiptune de interfaz como `.wav` con un script propio (e
 > un detalle importante que quiero agreues tambien en @especificaciones.md ya que para todas las fases se debe de considerar esto. El juego debe de ser responsivo ya que esta pensado para jugarse en celular o bien en pc
 
 La IA agregó la sección "Diseño responsivo" en §3, con pantallas objetivo, reglas y criterios transversales de aceptación. También añadió la regla 5 en §1, una línea en el prompt de sistema (§14), una prueba final en §16 y la decisión en §18.
+
+## Ajuste: el editor cumple el requisito responsivo
+
+> si corrigelo
+
+- **Áreas táctiles:** `setTouchArea` amplía el área sin cambiar el dibujo y se aplica a botones, flechas, selectores, campo de nombre y pausa del HUD. Las muestras de color reparten su área en una rejilla sin solapes. Tocar el valor de un selector también avanza la opción.
+- **Notch:** margen con `env(safe-area-inset-*)`, alto con `100dvh` y bandas laterales del color de fondo.
+- **Ayuda de teclado:** solo aparece si se usa teclado o gamepad (`InputSystem.lastDevice`).
+- **Campo de nombre:** se puede editar en Safari y la página vuelve a su lugar al cerrar el teclado.
+- **Regla ajustada:** las filas del editor están a 22 px (pantalla de referencia), así que en un teléfono de 568 × 320 no hay espacio para 44 px reales. La regla quedó en 22 px lógicos (≥ 44 px reales desde ×2) y el teléfono pequeño de referencia es 667 × 375 (§3 y §18).

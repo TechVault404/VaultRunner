@@ -3,6 +3,7 @@ import { frameIndex } from '../assets';
 import { playSfx, type SfxKey } from '../systems/AudioSystem';
 import { COLOR, FONT, TIMING, UI } from '../theme';
 import { PixelText } from './text';
+import { setTouchArea } from './touch';
 
 export interface ButtonBox {
   x: number;
@@ -53,7 +54,7 @@ export class Button extends Phaser.GameObjects.Container {
     this.add([this.bg, this.content]);
     this.layoutContent(w, h);
 
-    this.bg.setInteractive({ useHandCursor: true });
+    setTouchArea(this.bg);
     this.bg.on(Phaser.Input.Events.GAMEOBJECT_POINTER_OVER, () => this.emit('hover', this));
     this.bg.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => this.setPressed(true));
     this.bg.on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => !this.busy && this.setPressed(false));

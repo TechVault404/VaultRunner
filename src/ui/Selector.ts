@@ -3,6 +3,7 @@ import { frameIndex } from '../assets';
 import { COLOR, UI } from '../theme';
 import { addPanel } from './panels';
 import { PixelText } from './text';
+import { setTouchArea } from './touch';
 
 const ICONS_KEY = 'icons';
 
@@ -34,8 +35,10 @@ export class Selector extends Phaser.GameObjects.Container {
     const right = this.arrow(w - arrowRightInset, arrowDy, 'arrow_r', () => options.onStep(1));
     this.add([label, panel, this.fill, this.value, left, right]);
 
-    panel.setInteractive();
+    // Tapping the value also advances it: on a phone the arrows are the smallest targets.
+    setTouchArea(panel);
     panel.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, options.onFocus);
+    panel.on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => options.onStep(1));
     for (const arrow of [left, right]) arrow.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, options.onFocus);
     scene.add.existing(this);
   }
@@ -52,10 +55,8 @@ export class Selector extends Phaser.GameObjects.Container {
   }
 
   private arrow(x: number, y: number, icon: string, onClick: () => void): Phaser.GameObjects.Image {
-    const image = this.scene.add
-      .image(x, y, ICONS_KEY, frameIndex(this.scene, ICONS_KEY, icon))
-      .setOrigin(0)
-      .setInteractive({ useHandCursor: true });
+    const image = this.scene.add.image(x, y, ICONS_KEY, frameIndex(this.scene, ICONS_KEY, icon)).setOrigin(0);
+    setTouchArea(image);
     image.on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, onClick);
     return image;
   }

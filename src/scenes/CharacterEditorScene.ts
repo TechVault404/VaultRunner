@@ -55,6 +55,7 @@ export class CharacterEditorScene extends Phaser.Scene {
   private selectors!: Map<CharacterField, Selector>;
   private swatches!: Record<'outfitColor' | 'hairColor', Swatches>;
   private nameField!: NameField;
+  private keyboardHint!: PixelText;
   private buttons!: Button[];
   private row = 0;
   private buttonIndex = PRIMARY;
@@ -79,7 +80,7 @@ export class CharacterEditorScene extends Phaser.Scene {
     this.createSelectors();
     this.createPreview();
     this.createColorsAndName();
-    pixelText(this, SCREEN.cx, layout.hint.y, '← → CAMBIAR   ↑ ↓ CATEGORÍA   ENTER ELEGIR', {
+    this.keyboardHint = pixelText(this, SCREEN.cx, layout.hint.y, '← → CAMBIAR   ↑ ↓ CATEGORÍA   ENTER ELEGIR', {
       color: COLOR.textDisabled,
       shadow: null,
       align: 'center',
@@ -92,6 +93,8 @@ export class CharacterEditorScene extends Phaser.Scene {
 
   update(): void {
     this.inputSystem.update();
+    // Keyboard hints make no sense on a phone; they show up as soon as a key or pad is used.
+    this.keyboardHint.setVisible(this.inputSystem.lastDevice !== 'touch');
     if (this.nameField.editing) return;
     const input = this.inputSystem;
     if (input.justPressed('uiBack')) return this.back();

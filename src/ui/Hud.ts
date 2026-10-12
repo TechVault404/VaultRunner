@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { frameIndex } from '../assets';
 import { COLOR, DEPTH, fmtDistance, fmtScoreHud, HUD } from '../theme';
 import { pixelText, type PixelText } from './text';
+import { setTouchArea } from './touch';
 
 const PAUSE_KEY = 'touch_pause';
 
@@ -25,8 +26,8 @@ export class Hud {
       .image(x, y, PAUSE_KEY, normal)
       .setOrigin(0)
       .setDisplaySize(size, size)
-      .setDepth(DEPTH.hud)
-      .setInteractive({ useHandCursor: true });
+      .setDepth(DEPTH.hud);
+    setTouchArea(pause);
     pause.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => pause.setFrame(pressed));
     pause.on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, () => pause.setFrame(normal));
     pause.on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, () => {
