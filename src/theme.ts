@@ -188,6 +188,18 @@ export const LAYOUT = {
     title: { y: 50 },
     buttons: { x: 116, y: 72, w: 88, h: 16, step: 20 },
   },
+  // Aviso "Gira tu teléfono" en vertical (screens/10_gira_telefono.png): lienzo de 180 × 320
+  rotate: {
+    size: { w: 180, h: 320, cx: 90 },
+    sky: { bottom: 249, scrollX: 69 },            // cielo de la zona 1; scrollX deja la luna asomando a la derecha
+    logo: { y: 38 },
+    phone: box(70, 140, 40, 60),                  // marco en textSecondary
+    phoneScreen: box(72, 144, 36, 50),            // pantalla en surface
+    phoneButton: box(86, 196, 8, 2),              // botón de inicio en textMuted
+    icon: { x: 116, y: 132 },                     // ícono "retry" girando el teléfono
+    title: { y: 220, step: 20 },                  // GIRA TU / TELÉFONO, escala ×2
+    subtitle: { y: 268, step: 10 },               // VAULT RUNNER SE JUEGA / EN HORIZONTAL
+  },
   gameOver: {
     banner: {
       area: box(70, 8, 181, 23), textY: 13, edge: 2, // filas de luz arriba y sombra abajo

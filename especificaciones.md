@@ -89,7 +89,7 @@ El juego está pensado para jugarse **en celular o en PC** con la misma calidad.
 - **Legibilidad.** Todo texto y todo icono se lee en el teléfono pequeño a distancia normal de juego.
 - **Teclado del teléfono.** Cuando aparece el teclado virtual (p. ej., el nombre en el editor), la pantalla no se rompe ni queda desplazada al cerrarlo.
 - **Sin comportamientos del navegador.** En el lienzo no hay zoom con doble toque ni pellizco, ni scroll, ni rebote, ni menú contextual, ni selección de texto.
-- **Horizontal en móvil.** El juego se juega en horizontal; en vertical se pausa y muestra "Gira tu teléfono" (sección 13.3).
+- **Solo horizontal.** El juego se juega únicamente en horizontal; no hay diseño vertical. Siempre que el área disponible sea más alta que ancha (teléfono en vertical o ventana angosta), el `OrientationGuard` cambia el lienzo a 180 × 320 y muestra la escena "Gira tu teléfono" (`screens/10_gira_telefono`), que pausa todo; si había una partida en curso, se abre el menú de pausa. Al volver a horizontal se restaura el lienzo de 320 × 180 y se reanuda lo que estaba corriendo. En Android, al entrar a pantalla completa, se intenta además fijar la orientación horizontal. Toda escena nueva funciona con este mecanismo sin código extra.
 
 **Criterios transversales de aceptación (en cada fase)**
 - [ ] Lo nuevo de la fase funciona en una ventana de PC, incluso al redimensionarla mientras se usa.
@@ -484,7 +484,7 @@ El mundo avanza por zonas según la distancia. Al cambiar de zona hay una transi
 - Pausa automática al cambiar de pestaña o bloquear el teléfono.
 
 ### 13.3 Móvil
-- Pantalla horizontal; si está en vertical, mostrar aviso "Gira tu teléfono".
+- Pantalla horizontal; si está en vertical, mostrar aviso "Gira tu teléfono" (ya implementado desde la Fase 1; ver "Diseño responsivo", sección 3).
 - Botones táctiles semitransparentes de al menos 44 × 44 px reales.
 - Evitar zoom, scroll y menú contextual en el lienzo; probar en Chrome Android y Safari iOS.
 - Opción de pantalla completa en el menú.
@@ -613,5 +613,6 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | 2026-10-12 | Salir del editor | Esc vuelve al menú sin guardar; solo GUARDAR Y JUGAR guarda el personaje. |
 | 2026-10-12 | Sonidos de interfaz | Se adelantan a la Fase 1 los clics de UI de §13.1 (mover foco, cambiar opción, confirmar, cancelar, aleatorio, restablecer, escribir). Respetan el interruptor de efectos y hay una sola instancia por sonido. |
 | 2026-10-12 | Diseño responsivo | Requisito transversal: el juego se juega en celular y en PC. Cada fase cumple las reglas y criterios de la sección 3 "Diseño responsivo" y el prompt de sistema lo recuerda. |
+| 2026-10-12 | Orientación | Solo horizontal (como Jetpack Joyride). El aviso "Gira tu teléfono" se adelanta de la Fase 6 a la Fase 1, porque sin él el juego se ve diminuto en un teléfono en vertical. |
 | 2026-10-12 | Áreas táctiles | Mínimo 22 px lógicos (≥ 44 px reales desde escala ×2). El teléfono pequeño de referencia es 667 × 375: en 568 × 320 las filas del editor, a 22 px como en la referencia, no alcanzan 44 px reales. |
 | 2026-10-12 | Nombre del personaje | Solo caracteres de la fuente pixel (A–Z, 0–9, ÁÉÍÓÚÜÑ, espacio), en mayúsculas, máx. 10. |

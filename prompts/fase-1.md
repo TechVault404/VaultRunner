@@ -44,3 +44,13 @@ La IA agregó la sección "Diseño responsivo" en §3, con pantallas objetivo, r
 - **Ayuda de teclado:** solo aparece si se usa teclado o gamepad (`InputSystem.lastDevice`).
 - **Campo de nombre:** se puede editar en Safari y la página vuelve a su lugar al cerrar el teclado.
 - **Regla ajustada:** las filas del editor están a 22 px (pantalla de referencia), así que en un teléfono de 568 × 320 no hay espacio para 44 px reales. La regla quedó en 22 px lógicos (≥ 44 px reales desde ×2) y el teléfono pequeño de referencia es 667 × 375 (§3 y §18).
+
+## Ajuste: solo horizontal, con aviso "Gira tu teléfono"
+
+> Pero no veo que realmente sea responsivo *(capturas de un teléfono en vertical: el juego aparece como una franja pequeña)*
+
+La IA explicó que el lienzo es horizontal de 320 × 180 y preguntó cómo debía comportarse en vertical. Respuesta:
+
+> solo horizontal
+
+Se agregó `OrientationGuard`: en vertical cambia el lienzo a 180 × 320 y muestra `RotateScene` (copia de `screens/10_gira_telefono`), que pausa todo y abre la pausa si había partida. Al volver a horizontal restaura el lienzo y reanuda. En Android también intenta fijar la orientación horizontal en pantalla completa. Se probó con emulación de teléfono: menú en vertical, giro, partida, giro a vertical y regreso (la partida queda en PAUSA).

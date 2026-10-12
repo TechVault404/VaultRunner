@@ -7,6 +7,7 @@ import { GameScene } from './scenes/GameScene';
 import { MenuScene } from './scenes/MenuScene';
 import { PauseScene } from './scenes/PauseScene';
 import { PreloadScene } from './scenes/PreloadScene';
+import { RotateScene } from './scenes/RotateScene';
 import { COLOR, SCREEN } from './theme';
 
 const game = new Phaser.Game({
@@ -30,7 +31,7 @@ const game = new Phaser.Game({
     gamepad: true,
     activePointers: INPUT.activePointers,
   },
-  scene: [BootScene, PreloadScene, MenuScene, CharacterEditorScene, GameScene, PauseScene, GameOverScene],
+  scene: [BootScene, PreloadScene, MenuScene, CharacterEditorScene, GameScene, PauseScene, GameOverScene, RotateScene],
 });
 
 // Letterbox bands around the canvas use the scene background color.
