@@ -296,6 +296,7 @@ Todo asset nuevo, hecho con IA o a mano, pasa por este proceso:
 ## 14. Accesibilidad y móvil
 
 - Objetivos táctiles ≥ 44 px reales (los botones táctiles de 32 px lógicos lo cumplen desde escala ×1.4).
+- Todo control interactivo tiene un área táctil de al menos `UI.touchMin` (22 px lógicos) aunque se dibuje más chico: usa `setTouchArea` (`src/ui/touch.ts`). Ver "Diseño responsivo" en la sección 3 de la especificación.
 - Todo lo que se hace con mouse se puede hacer con teclado, con foco visible.
 - Ningún parpadeo más rápido de 10 Hz ni destellos de pantalla completa.
 - El aviso "Gira tu teléfono" aparece siempre que el alto sea mayor que el ancho.

@@ -6,6 +6,9 @@ export type Action = keyof typeof INPUT.keys;
 
 const ACTIONS = Object.keys(INPUT.keys) as Action[];
 
+/** Kind of device the player used last; lets UI show keyboard hints only when they apply. */
+export type InputDevice = 'keyboard' | 'mouse' | 'touch' | 'gamepad';
+
 /**
  * Translates keyboard, touch, mouse and gamepad into abstract actions.
  * One instance per scene; call `update()` once at the start of the scene's `update`.
@@ -25,8 +28,10 @@ export class InputSystem {
   private readonly keyToActions = new Map<number, Action[]>();
   /** Touch pointers on the left half: their start Y and the action they hold. */
   private readonly touches = new Map<number, { startY: number; action: Action }>();
+  private device: InputDevice;
 
   constructor(private readonly scene: Phaser.Scene) {
+    this.device = scene.sys.game.device.input.touch ? 'touch' : 'keyboard';
     for (const action of ACTIONS) this.holders.set(action, new Set());
     this.bindKeyboard();
     this.bindPointer();
@@ -43,6 +48,10 @@ export class InputSystem {
     this.released = this.pendingReleased;
     this.pendingPressed = new Set();
     this.pendingReleased = new Set();
+  }
+
+  get lastDevice(): InputDevice {
+    return this.device;
   }
 
   isDown(action: Action): boolean {
@@ -98,6 +107,7 @@ export class InputSystem {
   }
 
   private onKeyDown(event: KeyboardEvent): void {
+    this.device = 'keyboard';
     for (const action of this.keyToActions.get(event.keyCode) ?? []) this.press(action, `key:${event.keyCode}`);
   }
 
@@ -114,6 +124,7 @@ export class InputSystem {
   }
 
   private onPointerDown(pointer: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]): void {
+    this.device = pointer.wasTouch ? 'touch' : 'mouse';
     // Pointers on interactive UI (buttons) are handled by the UI itself.
     if (over.length > 0) return;
     const source = `ptr:${pointer.id}`;
@@ -174,6 +185,7 @@ export class InputSystem {
       ['uiConfirm', button(gamepad.buttonA)],
       ['uiBack', button(gamepad.buttonB)],
     ];
+    if (states.some(([, isPressed]) => isPressed)) this.device = 'gamepad';
     for (const [action, isPressed] of states) {
       if (isPressed) this.press(action, 'pad');
       else this.release(action, 'pad');

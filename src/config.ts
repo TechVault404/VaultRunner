@@ -26,6 +26,8 @@ export const CHARACTER = {
   /** 0 = none (no layer drawn). */
   accessories: 5,
   weapons: 3,
+  /** Characters allowed in the name (upper case; must exist in the pixel font). */
+  nameCharset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÁÉÍÓÚÜÑ ',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -71,12 +73,27 @@ export const PLAYER = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// Audio (spec §10.4, §13.1) — UI sounds now; music arrives in Phase 3
+// ---------------------------------------------------------------------------
+export const AUDIO = {
+  /** Volume per sound effect key (keys match public/assets/manifest.json "audio"). */
+  sfx: {
+    ui_move: 0.35,
+    ui_change: 0.45,
+    ui_confirm: 0.5,
+    ui_back: 0.45,
+    ui_random: 0.5,
+    ui_reset: 0.45,
+    ui_type: 0.4,
+  },
+} as const;
+
+// ---------------------------------------------------------------------------
 // Sections filled in later phases
 // ---------------------------------------------------------------------------
 export const SHOOTING = {} as const; // Phase 2
 export const DIFFICULTY = {} as const; // Phase 3
 export const SCORE = {} as const; // Phase 3
 export const BIOMES = {} as const; // Phase 3
-export const AUDIO = {} as const; // Phase 3
 export const SPAWN = {} as const; // Phase 4
 export const POWERUPS = {} as const; // Phase 5

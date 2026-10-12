@@ -6,4 +6,5 @@ export const SceneKey = {
   Game: 'Game',
   Pause: 'Pause',
   GameOver: 'GameOver',
+  Rotate: 'Rotate',
 } as const;

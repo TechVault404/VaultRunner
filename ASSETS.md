@@ -46,9 +46,13 @@ En Phaser, un `Container` con 5 sprites que reproducen la misma animación (mism
 
 `screens/` contiene las pantallas de referencia (×1 y ×4) armadas con estos mismos archivos.
 
+## Audio
+
+- **Sonidos de interfaz** `audio/sfx/ui_*.wav` (generados con `tools/audio/ui_sfx.py`, local): `ui_move` (mover el foco), `ui_change` (cambiar opción o color), `ui_confirm` (botón), `ui_back` (cancelar), `ui_random` (dado), `ui_reset` (restablecer), `ui_type` (escribir el nombre). Están registrados en `manifest.audio`; el volumen de cada uno está en `AUDIO.sfx` (`config.ts`).
+
 ## Pendiente
 
-Audio (7 pistas y 16 efectos) no está incluido.
+Música (7 pistas) y los efectos de juego de la sección 13.1.
 
 ## Licencia
 

@@ -3,6 +3,7 @@ import { PLAYER } from '../config';
 import { Backdrop } from '../entities/Backdrop';
 import { CharacterSprite } from '../entities/CharacterSprite';
 import { InputSystem } from '../systems/InputSystem';
+import { PORTRAIT_EVENT } from '../systems/OrientationGuard';
 import { saveSystem } from '../systems/SaveSystem';
 import { DEPTH, LAYOUT, SCREEN } from '../theme';
 import { Button } from '../ui/Button';
@@ -44,9 +45,11 @@ export class GameScene extends Phaser.Scene {
 
     this.game.events.on(Phaser.Core.Events.BLUR, this.openPause, this);
     this.game.events.on(Phaser.Core.Events.HIDDEN, this.openPause, this);
+    this.game.events.on(PORTRAIT_EVENT, this.openPause, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.game.events.off(Phaser.Core.Events.BLUR, this.openPause, this);
       this.game.events.off(Phaser.Core.Events.HIDDEN, this.openPause, this);
+      this.game.events.off(PORTRAIT_EVENT, this.openPause, this);
     });
   }
 
