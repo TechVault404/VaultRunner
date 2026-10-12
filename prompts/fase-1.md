@@ -28,3 +28,9 @@ Otras decisiones tomadas al implementar:
 > agregale sonidos de controles (cuando se seleccionan o cambian caracteristicas, cuando se usa el aleatorio, etc)
 
 La IA generó 7 sonidos chiptune de interfaz como `.wav` con un script propio (estilo sfxr), los registró en `manifest.json` y agregó `playSfx` en `systems/AudioSystem.ts`. Los sonidos respetan el interruptor de efectos del menú. Todos los botones del juego suenan al pulsarse, y mover el foco en cualquier menú hace un "bip". En el editor también suenan cambiar una opción o un color, ALEATORIO (dado), RESTABLECER, escribir el nombre y salir con Esc.
+
+## Ajuste: requisito responsivo en la especificación
+
+> un detalle importante que quiero agreues tambien en @especificaciones.md ya que para todas las fases se debe de considerar esto. El juego debe de ser responsivo ya que esta pensado para jugarse en celular o bien en pc
+
+La IA agregó la sección "Diseño responsivo" en §3, con pantallas objetivo, reglas y criterios transversales de aceptación. También añadió la regla 5 en §1, una línea en el prompt de sistema (§14), una prueba final en §16 y la decisión en §18.
