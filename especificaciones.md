@@ -580,4 +580,5 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | 2026-10-11 | Personaje por defecto | Piel 1, sudadera cian, cabello picudo negro, audífonos, blaster (el de las pantallas de referencia). |
 | 2026-10-12 | Colores del personaje | Se usan las variantes ya pintadas de los assets (intercambio de paleta hecho de antemano) en lugar de tinte en tiempo real (DISENO §4). |
 | 2026-10-12 | Salir del editor | Esc vuelve al menú sin guardar; solo GUARDAR Y JUGAR guarda el personaje. |
+| 2026-10-12 | Sonidos de interfaz | Se adelantan a la Fase 1 los clics de UI de §13.1 (mover foco, cambiar opción, confirmar, cancelar, aleatorio, restablecer, escribir). Respetan el interruptor de efectos y hay una sola instancia por sonido. |
 | 2026-10-12 | Nombre del personaje | Solo caracteres de la fuente pixel (A–Z, 0–9, ÁÉÍÓÚÜÑ, espacio), en mayúsculas, máx. 10. |

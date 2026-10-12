@@ -1072,6 +1072,36 @@
    "note": "Solo mayúsculas; usar text.toUpperCase(). Incluye ÁÉÍÓÚÜÑ¡¿×."
   }
  ],
+ "audio": [
+  {
+   "key": "ui_move",
+   "url": "assets/audio/sfx/ui_move.wav"
+  },
+  {
+   "key": "ui_change",
+   "url": "assets/audio/sfx/ui_change.wav"
+  },
+  {
+   "key": "ui_confirm",
+   "url": "assets/audio/sfx/ui_confirm.wav"
+  },
+  {
+   "key": "ui_back",
+   "url": "assets/audio/sfx/ui_back.wav"
+  },
+  {
+   "key": "ui_random",
+   "url": "assets/audio/sfx/ui_random.wav"
+  },
+  {
+   "key": "ui_reset",
+   "url": "assets/audio/sfx/ui_reset.wav"
+  },
+  {
+   "key": "ui_type",
+   "url": "assets/audio/sfx/ui_type.wav"
+  }
+ ],
  "notes": {
   "player": {
    "frameOrder": [

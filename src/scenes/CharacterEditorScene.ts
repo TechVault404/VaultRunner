@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { getManifest } from '../assets';
 import { Backdrop } from '../entities/Backdrop';
 import { CharacterSprite } from '../entities/CharacterSprite';
+import { playSfx } from '../systems/AudioSystem';
 import { cycleOption, randomCharacter, type CharacterField } from '../systems/CharacterOptions';
 import { InputSystem } from '../systems/InputSystem';
 import { createDefaultCharacter, saveSystem, type CharacterConfig } from '../systems/SaveSystem';
@@ -109,8 +110,8 @@ export class CharacterEditorScene extends Phaser.Scene {
     SELECTORS.forEach(({ field, label }, i) => {
       const selector = new Selector(this, x, y + i * step, w, {
         label,
-        onStep: (delta) => this.change(cycleOption(this.draft, field, delta)),
-        onFocus: () => this.focusRow(i),
+        onStep: (delta) => this.change(cycleOption(this.draft, field, delta), true),
+        onFocus: () => this.focusRow(i, false),
       });
       this.selectors.set(field, selector);
     });
@@ -133,8 +134,8 @@ export class CharacterEditorScene extends Phaser.Scene {
         labelDy: layout.swatchLabelDy,
         ramps: RAMP.outfit,
         onPick: (index) => {
-          this.focusRow(swatchRow('outfitColor'));
-          this.change({ ...this.draft, outfitColor: index });
+          this.focusRow(swatchRow('outfitColor'), false);
+          this.change({ ...this.draft, outfitColor: index }, true);
         },
       }),
       hairColor: new Swatches(this, layout.hairColors, {
@@ -142,14 +143,14 @@ export class CharacterEditorScene extends Phaser.Scene {
         labelDy: layout.swatchLabelDy,
         ramps: RAMP.hair,
         onPick: (index) => {
-          this.focusRow(swatchRow('hairColor'));
-          this.change({ ...this.draft, hairColor: index });
+          this.focusRow(swatchRow('hairColor'), false);
+          this.change({ ...this.draft, hairColor: index }, true);
         },
       }),
     };
     this.nameField = new NameField(this, {
       onChange: (name) => this.change({ ...this.draft, name }),
-      onFocus: () => this.focusRow(ROWS.findIndex((r) => r.kind === 'name')),
+      onFocus: () => this.focusRow(ROWS.findIndex((r) => r.kind === 'name'), false),
       // Phaser's keyboard was off while typing and missed key-ups: start clean.
       onStop: () => this.inputSystem.reset(),
     });
@@ -161,29 +162,34 @@ export class CharacterEditorScene extends Phaser.Scene {
       new Button(this, layout.random, {
         label: 'ALEATORIO',
         icon: 'dice',
+        sound: 'ui_random',
         onClick: () => this.change(randomCharacter(this.draft.name)),
       }),
       new Button(this, layout.reset, {
         label: 'RESTABLECER',
         icon: 'reset',
+        sound: 'ui_reset',
         onClick: () => this.change(createDefaultCharacter()),
       }),
       new Button(this, layout.save, { label: 'GUARDAR Y JUGAR', onClick: () => this.saveAndPlay() }),
     ];
     this.buttons.forEach((button, i) =>
       button.on('hover', () => {
+        const moved = this.row !== ROWS.length - 1 || this.buttonIndex !== i;
         this.buttonIndex = i;
-        this.focusRow(ROWS.length - 1);
+        this.focusRow(ROWS.length - 1, false);
+        if (moved) playSfx(this, 'ui_move');
       }),
     );
   }
 
   // ─── State ───────────────────────────────────────────────────────────────
 
-  /** Applies a new draft and updates every view at once (preview included). */
-  private change(next: CharacterConfig): void {
+  /** Applies a new draft and updates every view at once (preview included). Buttons play their own sound. */
+  private change(next: CharacterConfig, audible = false): void {
     this.draft = next;
     this.refresh();
+    if (audible) playSfx(this, 'ui_change');
   }
 
   private refresh(): void {
@@ -199,8 +205,11 @@ export class CharacterEditorScene extends Phaser.Scene {
 
   // ─── Focus and navigation ────────────────────────────────────────────────
 
-  private focusRow(index: number): void {
-    this.row = Phaser.Math.Wrap(index, 0, ROWS.length);
+  /** `audible`: ui_move when the row changes (keyboard); pointer actions play their own sound. */
+  private focusRow(index: number, audible = true): void {
+    const next = Phaser.Math.Wrap(index, 0, ROWS.length);
+    if (audible && next !== this.row) playSfx(this, 'ui_move');
+    this.row = next;
     this.refreshFocus();
   }
 
@@ -224,10 +233,11 @@ export class CharacterEditorScene extends Phaser.Scene {
     switch (current.kind) {
       case 'selector':
       case 'swatches':
-        this.change(cycleOption(this.draft, current.field, delta));
+        this.change(cycleOption(this.draft, current.field, delta), true);
         break;
       case 'buttons':
         this.buttonIndex = Phaser.Math.Wrap(this.buttonIndex + delta, 0, this.buttons.length);
+        playSfx(this, 'ui_move');
         this.refreshFocus();
         break;
       case 'name':
@@ -260,6 +270,7 @@ export class CharacterEditorScene extends Phaser.Scene {
   }
 
   private back(): void {
+    playSfx(this, 'ui_back');
     fadeToScene(this, SceneKey.Menu);
   }
 }

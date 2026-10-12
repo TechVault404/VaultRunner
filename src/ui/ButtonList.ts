@@ -1,3 +1,4 @@
+import { playSfx } from '../systems/AudioSystem';
 import type { InputSystem } from '../systems/InputSystem';
 import type { Button } from './Button';
 
@@ -13,21 +14,25 @@ export class ButtonList {
     private readonly buttons: Button[],
     initialIndex = 0,
   ) {
-    buttons.forEach((button, i) => button.on('hover', () => this.focus(i)));
-    this.focus(initialIndex);
+    buttons.forEach((button, i) => button.on('hover', () => this.focus(i, true)));
+    this.focus(initialIndex, false);
   }
 
   /** Call after `input.update()` each frame. */
   update(): void {
-    if (this.input.justPressed('uiUp') || this.input.justPressed('uiLeft')) this.focus(this.index - 1);
-    if (this.input.justPressed('uiDown') || this.input.justPressed('uiRight')) this.focus(this.index + 1);
+    if (this.input.justPressed('uiUp') || this.input.justPressed('uiLeft')) this.focus(this.index - 1, true);
+    if (this.input.justPressed('uiDown') || this.input.justPressed('uiRight')) this.focus(this.index + 1, true);
     if (this.input.justPressed('uiConfirm')) this.buttons[this.index]?.activate();
   }
 
-  private focus(index: number): void {
+  /** `audible`: play ui_move when the focus actually changes. */
+  private focus(index: number, audible: boolean): void {
     const count = this.buttons.length;
     if (count === 0) return;
-    this.index = ((index % count) + count) % count;
+    const next = ((index % count) + count) % count;
+    const target = this.buttons[next];
+    if (audible && next !== this.index && target) playSfx(target.scene, 'ui_move');
+    this.index = next;
     this.buttons.forEach((button, i) => button.setFocused(i === this.index));
   }
 }

@@ -13,6 +13,7 @@ export interface AssetManifest {
   }[];
   images: { key: string; url: string }[];
   bitmapFonts: { key: string; textureURL: string; fontDataURL: string }[];
+  audio: { key: string; url: string }[];
   notes: {
     player: {
       animations: Record<PlayerAnim, { start: number; end: number }>;
@@ -34,6 +35,7 @@ export function queueManifest(load: Phaser.Loader.LoaderPlugin, manifest: AssetM
   }
   for (const image of manifest.images) load.image(image.key, image.url);
   for (const font of manifest.bitmapFonts) load.bitmapFont(font.key, font.textureURL, font.fontDataURL);
+  for (const sound of manifest.audio) load.audio(sound.key, sound.url);
 }
 
 export function getManifest(scene: Phaser.Scene): AssetManifest {

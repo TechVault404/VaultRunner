@@ -22,3 +22,9 @@ Otras decisiones tomadas al implementar:
 - **Colores pre-pintados en vez de tinte.** La especificación pide "tinte o intercambio de paleta"; `DISENO.md` prohíbe `setTint` en personajes y los assets ya traen cada variante pintada (`outfit_{estilo}_{color}`, `hair_{estilo}_{color}`). Es el intercambio de paleta hecho de antemano.
 - **Nombre:** se escribe con un `<input>` HTML invisible para que en el teléfono se abra el teclado. Solo acepta los caracteres de la fuente pixel (A–Z, 0–9, ÁÉÍÓÚÜÑ y espacio), en mayúsculas, máximo 10.
 - **Medidas:** las coordenadas salen de `screens/02_editor.png`. Los tres botones miden 18 px de alto, como en la referencia.
+
+## Ajuste: sonidos de los controles
+
+> agregale sonidos de controles (cuando se seleccionan o cambian caracteristicas, cuando se usa el aleatorio, etc)
+
+La IA generó 7 sonidos chiptune de interfaz como `.wav` con un script propio (estilo sfxr), los registró en `manifest.json` y agregó `playSfx` en `systems/AudioSystem.ts`. Los sonidos respetan el interruptor de efectos del menú. Todos los botones del juego suenan al pulsarse, y mover el foco en cualquier menú hace un "bip". En el editor también suenan cambiar una opción o un color, ALEATORIO (dado), RESTABLECER, escribir el nombre y salir con Esc.

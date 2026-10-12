@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { frameIndex } from '../assets';
+import { playSfx, type SfxKey } from '../systems/AudioSystem';
 import { COLOR, FONT, TIMING, UI } from '../theme';
 import { PixelText } from './text';
 
@@ -14,6 +15,8 @@ export interface ButtonOptions {
   label?: string;
   /** Frame name in the `icons` sheet. */
   icon?: string;
+  /** Sound on press; defaults to ui_confirm. */
+  sound?: SfxKey;
   onClick: () => void;
 }
 
@@ -72,6 +75,7 @@ export class Button extends Phaser.GameObjects.Container {
   activate(): void {
     if (this.busy) return;
     this.busy = true;
+    playSfx(this.scene, this.options.sound ?? 'ui_confirm');
     this.setPressed(true);
     this.scene.time.delayedCall(TIMING.buttonPress, () => {
       this.busy = false;

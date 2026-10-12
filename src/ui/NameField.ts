@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { SAVE } from '../config';
+import { playSfx } from '../systems/AudioSystem';
 import { sanitizeName } from '../systems/CharacterOptions';
 import { COLOR, LAYOUT, TIMING } from '../theme';
 import { addPanel } from './panels';
@@ -78,6 +79,7 @@ export class NameField extends Phaser.GameObjects.Container {
     this.setKeyboardEnabled(false);
     this.element.value = this.value;
     this.element.focus();
+    playSfx(this.scene, 'ui_confirm');
     this.cursorOn = true;
     this.render();
   }
@@ -106,12 +108,14 @@ export class NameField extends Phaser.GameObjects.Container {
   private readonly onInput = (): void => {
     const name = sanitizeName(this.element.value);
     if (this.element.value !== name) this.element.value = name;
+    if (name !== this.value) playSfx(this.scene, 'ui_type');
     this.options.onChange(name);
   };
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
     if (['Enter', 'Escape', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
       event.preventDefault();
+      if (this.editingName) playSfx(this.scene, event.key === 'Escape' ? 'ui_back' : 'ui_confirm');
       this.stopEditing();
     }
   };
