@@ -616,3 +616,6 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | 2026-10-12 | Orientación | Solo horizontal (como Jetpack Joyride). El aviso "Gira tu teléfono" se adelanta de la Fase 6 a la Fase 1, porque sin él el juego se ve diminuto en un teléfono en vertical. |
 | 2026-10-12 | Áreas táctiles | Mínimo 22 px lógicos (≥ 44 px reales desde escala ×2). El teléfono pequeño de referencia es 667 × 375: en 568 × 320 las filas del editor, a 22 px como en la referencia, no alcanzan 44 px reales. |
 | 2026-10-12 | Nombre del personaje | Solo caracteres de la fuente pixel (A–Z, 0–9, ÁÉÍÓÚÜÑ, espacio), en mayúsculas, máx. 10. |
+| 2026-10-12 | Pose de disparo | Los frames de disparo son una pose de pie: la animación de disparo solo se usa al correr en el suelo. En el aire o agachado se ve solo el destello (`muzzle`) en la punta del arma, y el proyectil sale a la altura del arma en cada pose. |
+| 2026-10-12 | Disparo sostenido | Mantener el botón de disparo (J/K, clic o botón táctil) sigue disparando al ritmo del cooldown, respetando el límite en pantalla. |
+| 2026-10-12 | Hitbox de pie | 12 × 20 con 2 px de margen en los cuatro lados (también abajo), igual que el agachado (12 × 10, filas 12–21 del frame). |

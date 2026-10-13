@@ -120,7 +120,7 @@ export const GROUND_TILES = { columns: 6, top: ['top_a', 'top_b'], fill: 'fill_a
 
 export const ANIM_FPS = {
   run: 12, crouch: 6, shoot: 12, death: 10, coin: 10, bug: 10, drone: 14,
-  glitch: 10, explosion: 13, saw: 16, laser: 8, dust: 14, spark: 16, shield: 6, aura: 12, trail: 15,
+  glitch: 10, explosion: 13, projectile: 12, muzzle: 20, saw: 16, laser: 8, dust: 14, spark: 16, shield: 6, aura: 12, trail: 15,
 } as const;
 
 export const TIMING = {
@@ -182,6 +182,8 @@ export const LAYOUT = {
   },
   game: {
     debugEnd: box(130, 5, 60, 16),               // temporal hasta la Fase 4
+    // Botones táctiles (DISENO §7.10), 32 × 32: agacharse abajo-izquierda, disparar abajo-derecha
+    touch: { crouch: { x: 8, y: 140 }, shoot: { x: 280, y: 140 } },
   },
   pause: {
     panel: box(104, 40, 112, 100),
