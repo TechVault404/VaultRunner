@@ -46,6 +46,8 @@ export const INPUT = {
     uiRight: ['RIGHT', 'D'],
     uiConfirm: ['ENTER', 'SPACE'],
     uiBack: ['ESC', 'BACKSPACE'],
+    /** Hitbox debug view (spec §9); development builds only. */
+    debug: ['F1'],
   },
   /** Vertical drag (in game px) on the left half that turns a touch into "crouch". */
   swipeDownThreshold: 12,
@@ -65,11 +67,55 @@ export const INPUT = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Player (spec §9) — rest in Phase 2
+// World (spec §9) — fixed speed until the DifficultySystem arrives in Phase 3
+// ---------------------------------------------------------------------------
+export const WORLD = {
+  /** Ground scroll speed, px/s. */
+  speed: 120,
+} as const;
+
+// ---------------------------------------------------------------------------
+// Player (spec §9)
 // ---------------------------------------------------------------------------
 export const PLAYER = {
   /** The world scrolls; the player's frame left edge stays at this x (DISENO §3). */
   x: 64,
+  /** px/s². */
+  gravity: 900,
+  /** px/s; max height ≈ 60 px. */
+  jumpVelocity: -330,
+  /** Vertical speed multiplier when the jump button is released before the peak. */
+  jumpCutMultiplier: 0.5,
+  /** A jump still works this long after leaving the ground (ms). */
+  coyoteMs: 80,
+  /** A jump pressed this long before landing still happens (ms). */
+  jumpBufferMs: 100,
+  /** px/s. */
+  maxFallSpeed: 500,
+  /** Vertical speed set by crouching in the air (px/s). */
+  fastFallSpeed: 450,
+  /** Jumps before touching the ground again; the double-jump powerup (Phase 5) raises it. */
+  maxJumps: 1,
+  /** Hitboxes inside the 16 × 24 frame: 2 px smaller than the sprite on each side. */
+  hitbox: {
+    stand: { dx: 2, dy: 2, w: 12, h: 20 },
+    /** The crouch pose is the frame's bottom 14 rows. */
+    crouch: { dx: 2, dy: 12, w: 12, h: 10 },
+  },
+} as const;
+
+// ---------------------------------------------------------------------------
+// Shooting (spec §9)
+// ---------------------------------------------------------------------------
+export const SHOOTING = {
+  cooldownMs: 350,
+  /** px/s, relative to the screen. */
+  speed: 300,
+  maxOnScreen: 3,
+  /** Pooled projectiles; room for the triple shot (Phase 5, 9 on screen). */
+  poolSize: 9,
+  /** Weapon tip inside the 16 × 24 frame, per pose (measured on player_weapon_*.png). */
+  muzzle: { x: 16, y: { run: 10, jump: 6, fall: 8, crouch: 18 } },
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -91,7 +137,6 @@ export const AUDIO = {
 // ---------------------------------------------------------------------------
 // Sections filled in later phases
 // ---------------------------------------------------------------------------
-export const SHOOTING = {} as const; // Phase 2
 export const DIFFICULTY = {} as const; // Phase 3
 export const SCORE = {} as const; // Phase 3
 export const BIOMES = {} as const; // Phase 3

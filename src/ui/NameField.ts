@@ -23,6 +23,8 @@ export class NameField extends Phaser.GameObjects.Container {
   private readonly label: PixelText;
   private readonly text: PixelText;
   private readonly element: HTMLInputElement;
+  /** Kept from the constructor: `this.scene` is already gone when the scene tears this down. */
+  private readonly keyboard: Phaser.Input.Keyboard.KeyboardPlugin | null;
   private value = '';
   private cursorOn = false;
   private editingName = false;
@@ -30,6 +32,7 @@ export class NameField extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, private readonly options: NameFieldOptions) {
     const { box, labelDx, labelDy, textDx, textDy } = LAYOUT.editor.nameField;
     super(scene, box.x, box.y);
+    this.keyboard = scene.input.keyboard;
 
     this.label = new PixelText(scene, labelDx, labelDy, 'NOMBRE', { color: COLOR.textMuted });
     const panel = addPanel(scene, { x: 0, y: 0, w: box.w, h: box.h });
@@ -56,7 +59,8 @@ export class NameField extends Phaser.GameObjects.Container {
         this.render();
       },
     });
-    scene.events.once(Phaser.Scenes.Events.SHUTDOWN, this.dispose, this);
+    // Not the scene SHUTDOWN: by then the display list is destroyed and `this.scene` is already unset.
+    this.once(Phaser.GameObjects.Events.DESTROY, this.dispose, this);
     scene.add.existing(this);
   }
 
@@ -104,8 +108,7 @@ export class NameField extends Phaser.GameObjects.Container {
   }
 
   private setKeyboardEnabled(enabled: boolean): void {
-    const keyboard = this.scene.input.keyboard;
-    if (keyboard) keyboard.manager.enabled = enabled;
+    if (this.keyboard) this.keyboard.manager.enabled = enabled;
   }
 
   private readonly onInput = (): void => {
