@@ -6,16 +6,20 @@ import { setTouchArea } from './touch';
 
 const PAUSE_KEY = 'touch_pause';
 
-/** In-game HUD (DISENO §8). Powerups, banners and toasts arrive in later phases. */
+/** In-game HUD (DISENO §8). Powerups arrive in Phase 5; banners and notices live in Announcer. */
 export class Hud {
   private readonly score: PixelText;
+  private readonly best: PixelText;
   private readonly distance: PixelText;
 
-  constructor(scene: Phaser.Scene, bestScore: number, onPause: () => void) {
+  constructor(
+    private readonly scene: Phaser.Scene,
+    bestScore: number,
+    onPause: () => void,
+  ) {
     this.score = pixelText(scene, HUD.score.x, HUD.score.y, '').setDepth(DEPTH.hud);
-    pixelText(scene, HUD.best.x, HUD.best.y, `RÉCORD ${fmtScoreHud(bestScore)}`, {
-      color: COLOR.textMuted,
-    }).setDepth(DEPTH.hud);
+    this.best = pixelText(scene, HUD.best.x, HUD.best.y, '', { color: COLOR.textMuted }).setDepth(DEPTH.hud);
+    this.setBest(bestScore);
     this.distance = pixelText(scene, HUD.distance.x, HUD.distance.y, '', { color: COLOR.accent }).setDepth(DEPTH.hud);
     this.setScore(0).setDistance(0);
 
@@ -39,6 +43,22 @@ export class Hud {
   setScore(score: number): this {
     this.score.setText(fmtScoreHud(score));
     return this;
+  }
+
+  setBest(best: number): this {
+    this.best.setText(`RÉCORD ${fmtScoreHud(best)}`);
+    return this;
+  }
+
+  /** The run passed the record: the line turns amber and blinks (DISENO §8). */
+  markRecordBeaten(): void {
+    this.best.setColor(COLOR.record);
+    const { times, hz } = HUD.recordBlink;
+    this.scene.time.addEvent({
+      delay: 1000 / hz / 2,
+      repeat: times * 2 - 1,
+      callback: () => this.best.setVisible(!this.best.visible),
+    });
   }
 
   setDistance(meters: number): this {

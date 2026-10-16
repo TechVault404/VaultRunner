@@ -67,11 +67,11 @@ export const INPUT = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// World (spec §9) — fixed speed until the DifficultySystem arrives in Phase 3
+// World (spec §10.1)
 // ---------------------------------------------------------------------------
 export const WORLD = {
-  /** Ground scroll speed, px/s. */
-  speed: 120,
+  /** 1 meter = 10 px travelled. */
+  pxPerMeter: 10,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -119,9 +119,30 @@ export const SHOOTING = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Audio (spec §10.4, §13.1) — UI sounds now; music arrives in Phase 3
+// Audio (spec §10.4, §13.1)
 // ---------------------------------------------------------------------------
 export const AUDIO = {
+  /** Music tracks (keys match public/assets/manifest.json "audio"). */
+  music: {
+    menu: 'music_menu',
+    /** One per zone, index = zone − 1. */
+    zones: ['music_zona1', 'music_zona2', 'music_zona3', 'music_zona4'],
+    gameOver: 'jingle_gameover',
+    record: 'jingle_record',
+    volume: 0.5,
+    jingleVolume: 0.6,
+    /** Crossfade between zone tracks (ms). */
+    crossfadeMs: 1500,
+    /** Fade when changing track between scenes, e.g. menu → game (ms). */
+    sceneFadeMs: 600,
+    /** Music level while the game is paused (fraction of `volume`). */
+    pausedLevel: 0.3,
+    /** Fade-out when the run ends, before the jingle (ms). */
+    endFadeMs: 300,
+    /** Playback rate once the difficulty level reaches `fastFromLevel`. */
+    fastRate: 1.05,
+    fastFromLevel: 0.8,
+  },
   /** Volume per sound effect key (keys match public/assets/manifest.json "audio"). */
   sfx: {
     ui_move: 0.35,
@@ -135,10 +156,48 @@ export const AUDIO = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// Difficulty (spec §10.2)
+// ---------------------------------------------------------------------------
+export const DIFFICULTY = {
+  /** px/s at 0 m. */
+  startSpeed: 120,
+  /** +px/s every `stepEveryM` meters. */
+  step: 4,
+  stepEveryM: 50,
+  /** px/s, never exceeded. */
+  maxSpeed: 300,
+} as const;
+
+// ---------------------------------------------------------------------------
+// Score (spec §10.3)
+// ---------------------------------------------------------------------------
+export const SCORE = {
+  perMeter: 1,
+  points: { coin: 10, groundEnemy: 50, flyingEnemy: 50, turret: 100 },
+  /** Single coins (patterns arrive in Phase 4): one every min–max meters. */
+  coins: {
+    everyMinM: 30,
+    everyMaxM: 60,
+    /** Center y of a coin; all reachable (ground lane or within the ≈60 px jump). Repeats weight the pick. */
+    heights: [140, 140, 140, 120, 104, 92],
+    /** Spawn just past the right edge (px). */
+    spawnX: 328,
+    poolSize: 6,
+  },
+} as const;
+
+// ---------------------------------------------------------------------------
+// Biomes (spec §10.1)
+// ---------------------------------------------------------------------------
+export const BIOMES = {
+  /** Start of each zone within a lap (m). */
+  startsM: [0, 500, 1500, 3000],
+  /** One lap of the 4 zones (m); then zone 1 again with the difficulty kept. */
+  lapM: 5000,
+} as const;
+
+// ---------------------------------------------------------------------------
 // Sections filled in later phases
 // ---------------------------------------------------------------------------
-export const DIFFICULTY = {} as const; // Phase 3
-export const SCORE = {} as const; // Phase 3
-export const BIOMES = {} as const; // Phase 3
 export const SPAWN = {} as const; // Phase 4
 export const POWERUPS = {} as const; // Phase 5

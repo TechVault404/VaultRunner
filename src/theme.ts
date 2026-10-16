@@ -101,8 +101,9 @@ export const HUD = {
     lowFraction: 0.25,                      // barra en COLOR.danger por debajo de esto
     blinkLastMs: 2000, blinkHz: 4,
   },
-  banner: { y: 64, h: 29, lineColor: PALETTE.cyan }, // cartel de cambio de zona
-  toast: { y: 30, h: 15 },                           // "¡RÉCORD SUPERADO!"
+  banner: { y: 64, h: 29, lineColor: PALETTE.cyan, zoneY: 68, nameY: 78 }, // cartel de cambio de zona
+  toast: { y: 30, h: 15, padX: 6, textDy: 4 },       // "¡RÉCORD SUPERADO!": caja = texto + padX por lado
+  recordBlink: { times: 3, hz: 4 },                  // récord superado: pasa a ámbar y parpadea
 } as const;
 
 // ─── Capas de dibujo (setDepth) ──────────────────────────────────────────
@@ -131,6 +132,7 @@ export const TIMING = {
   explosion: 300,
   floatingText: { duration: 600, rise: 12 },
   zoneBanner: { in: 250, hold: 1500, out: 250 },
+  zoneBlend: 2000,          // mezcla de fondos al cambiar de zona
   recordToast: 1500,
   invulnBlinkHz: 10,
   cursorBlink: 400,         // medio periodo del cursor "_" del campo de nombre

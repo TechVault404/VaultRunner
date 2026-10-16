@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import { getManifest } from '../assets';
 import { Backdrop } from '../entities/Backdrop';
 import { CharacterSprite } from '../entities/CharacterSprite';
-import { playSfx } from '../systems/AudioSystem';
+import { AUDIO } from '../config';
+import { music, playSfx } from '../systems/AudioSystem';
 import { cycleOption, randomCharacter, type CharacterField } from '../systems/CharacterOptions';
 import { InputSystem } from '../systems/InputSystem';
 import { createDefaultCharacter, saveSystem, type CharacterConfig } from '../systems/SaveSystem';
@@ -66,6 +67,7 @@ export class CharacterEditorScene extends Phaser.Scene {
 
   create(): void {
     fadeIn(this);
+    music.play(AUDIO.music.menu);
     this.inputSystem = new InputSystem(this);
     this.draft = { ...saveSystem.data.character };
     this.optionNames = getManifest(this).notes.player.options;

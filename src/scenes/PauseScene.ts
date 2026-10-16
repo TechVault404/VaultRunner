@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { music } from '../systems/AudioSystem';
 import { InputSystem } from '../systems/InputSystem';
 import { FONT, LAYOUT, SCREEN, UI } from '../theme';
 import { Button } from '../ui/Button';
@@ -19,6 +20,7 @@ export class PauseScene extends Phaser.Scene {
 
   create(): void {
     this.inputSystem = new InputSystem(this);
+    music.setDucked(true);
     const layout = LAYOUT.pause;
 
     addOverlay(this, UI.overlay.pause);
@@ -44,6 +46,7 @@ export class PauseScene extends Phaser.Scene {
   }
 
   private resumeGame(): void {
+    music.setDucked(false);
     this.scene.resume(SceneKey.Game);
     this.scene.stop();
   }
