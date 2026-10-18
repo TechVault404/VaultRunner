@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CHARACTER, SAVE } from '../src/config';
+import { AUDIO, CHARACTER, SAVE } from '../src/config';
 import {
   createDefaultSave,
   parseSave,
@@ -52,6 +52,8 @@ describe('parseSave', () => {
       { ...createDefaultSave(), bestScore: -1 },
       { ...createDefaultSave(), bestScore: '100' },
       { ...createDefaultSave(), settings: { music: 'yes', sfx: true } },
+      { ...createDefaultSave(), settings: { musicVolume: 50, sfx: true } },
+      { ...createDefaultSave(), settings: { musicVolume: 120, sfx: true } },
       { ...createDefaultSave(), stats: null },
       { ...createDefaultSave(), character: { ...createDefaultSave().character, skin: 1.5 } },
       { ...createDefaultSave(), character: { ...createDefaultSave().character, skin: CHARACTER.skins } },
@@ -64,8 +66,16 @@ describe('parseSave', () => {
   });
 
   it('keeps valid data', () => {
-    const valid = { ...createDefaultSave(), bestScore: 1234, settings: { music: false, sfx: true } };
+    const valid = { ...createDefaultSave(), bestScore: 1234, settings: { musicVolume: 0, sfx: true } };
     expect(parseSave(JSON.stringify(valid))).toEqual(valid);
+  });
+
+  it('upgrades the old music on/off switch to a volume, keeping the rest', () => {
+    const old = (music: boolean) => ({ ...createDefaultSave(), bestScore: 900, settings: { music, sfx: false } });
+    const on = parseSave(JSON.stringify(old(true)));
+    expect(on.bestScore).toBe(900);
+    expect(on.settings).toEqual({ musicVolume: AUDIO.music.defaultVolume, sfx: false });
+    expect(parseSave(JSON.stringify(old(false))).settings).toEqual({ musicVolume: 0, sfx: false });
   });
 });
 

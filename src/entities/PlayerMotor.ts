@@ -25,7 +25,7 @@ export type MotorPose = 'run' | 'jump' | 'fall' | 'crouch';
 /**
  * Vertical movement of the player (spec §9), with no Phaser dependency so it can be tested.
  * y grows downwards, like the screen. `groundY` is the surface under the player, or null over
- * a hole (Phase 4).
+ * a hole.
  */
 export class PlayerMotor {
   feetY: number;
@@ -81,8 +81,10 @@ export class PlayerMotor {
         this.canCut = false;
       }
       this.vy = Math.min(this.vy + config.gravity * dt, config.maxFallSpeed);
+      const before = this.feetY;
       this.feetY += this.vy * dt;
-      if (groundY !== null && this.vy >= 0 && this.feetY >= groundY) this.land(groundY);
+      // Only land when coming down onto the surface: feet already below it (in a hole) keep falling.
+      if (groundY !== null && this.vy >= 0 && this.feetY >= groundY && before <= groundY) this.land(groundY);
     }
 
     this.crouching = this.grounded && input.crouchHeld;

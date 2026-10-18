@@ -72,6 +72,24 @@ describe('PlayerMotor', () => {
     expect(motor.vy).toBeGreaterThan(0);
   });
 
+  it('falls through a hole instead of landing back up on its far edge', () => {
+    const motor = new PlayerMotor(GROUND);
+    run(motor, 12, {}, null); // 200 ms over a hole: coyote time over, feet below the surface
+    expect(motor.feetY).toBeGreaterThan(GROUND);
+    run(motor, 30); // the floor is back under the player
+    expect(motor.grounded).toBe(false);
+    expect(motor.feetY).toBeGreaterThan(GROUND + 20);
+  });
+
+  it('still lands on the far edge when the jump comes down onto it', () => {
+    const motor = new PlayerMotor(GROUND);
+    run(motor, 1, { jumpPressed: true, jumpHeld: true }, null);
+    run(motor, 20, { jumpHeld: true }, null);
+    run(motor, 60, { jumpHeld: true });
+    expect(motor.grounded).toBe(true);
+    expect(motor.feetY).toBe(GROUND);
+  });
+
   it('buffers a jump pressed shortly before landing', () => {
     const motor = new PlayerMotor(GROUND);
     run(motor, 1, { jumpPressed: true, jumpHeld: true });

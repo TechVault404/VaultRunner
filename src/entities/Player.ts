@@ -5,15 +5,16 @@ import type { InputSystem } from '../systems/InputSystem';
 import type { CharacterConfig } from '../systems/SaveSystem';
 import { ANIM_FPS, DEPTH } from '../theme';
 import { CharacterSprite } from './CharacterSprite';
-import { PlayerMotor, type MotorPose } from './PlayerMotor';
+import { PlayerMotor, type MotorInput, type MotorPose } from './PlayerMotor';
 
 const MUZZLE_KEY = 'muzzle';
+const NO_INPUT: MotorInput = { jumpPressed: false, jumpHeld: false, crouchPressed: false, crouchHeld: false };
 const MUZZLE_ANIM = 'muzzle_flash';
 
 /**
  * The player in the Game scene (spec §9): the editor's CharacterSprite, moved by a
  * PlayerMotor, with an Arcade body as hitbox (12 × 20 standing, 12 × 10 crouched).
- * The body does not move on its own; it follows the sprite (overlaps arrive in Phase 4).
+ * The body does not move on its own; it follows the sprite.
  */
 export class Player {
   readonly sprite: CharacterSprite;
@@ -23,6 +24,7 @@ export class Player {
   private readonly shootDuration: number;
   private shootLeft = 0;
   private hitbox: keyof typeof PLAYER.hitbox | null = null;
+  private dead = false;
 
   constructor(scene: Phaser.Scene, character: CharacterConfig, groundY: number) {
     this.motor = new PlayerMotor(groundY);
@@ -48,19 +50,20 @@ export class Player {
   }
 
   update(deltaMs: number, input: InputSystem, groundY: number | null): void {
-    this.motor.step(
-      deltaMs,
-      {
-        jumpPressed: input.justPressed('jump'),
-        jumpHeld: input.isDown('jump'),
-        crouchPressed: input.justPressed('crouch'),
-        crouchHeld: input.isDown('crouch'),
-      },
-      groundY,
-    );
+    // Once dead, the controls are gone: the body only falls (to the ground, or down a hole).
+    const controls = this.dead
+      ? NO_INPUT
+      : {
+          jumpPressed: input.justPressed('jump'),
+          jumpHeld: input.isDown('jump'),
+          crouchPressed: input.justPressed('crouch'),
+          crouchHeld: input.isDown('crouch'),
+        };
+    this.motor.step(deltaMs, controls, groundY);
     this.sprite.setFeetY(this.motor.feetY);
-    this.setHitbox(this.motor.crouching ? 'crouch' : 'stand');
+    if (!this.dead) this.setHitbox(this.motor.crouching ? 'crouch' : 'stand');
     this.body.updateFromGameObject();
+    if (this.dead) return;
 
     this.shootLeft = Math.max(0, this.shootLeft - deltaMs);
     const pose = this.motor.pose;
@@ -82,7 +85,19 @@ export class Player {
     this.muzzle.setVisible(true).play(MUZZLE_ANIM);
   }
 
-  /** Hitbox rectangle in screen coordinates (for tests and the Phase 4 collisions). */
+  /** Hit (spec §11.4): plays the death animation and ignores the controls from now on. */
+  die(): void {
+    if (this.dead) return;
+    this.dead = true;
+    this.muzzle.setVisible(false);
+    this.sprite.play('death');
+  }
+
+  get isDead(): boolean {
+    return this.dead;
+  }
+
+  /** Hitbox rectangle in screen coordinates. */
   get bounds(): Phaser.Geom.Rectangle {
     const { x, y, width, height } = this.body;
     return new Phaser.Geom.Rectangle(x, y, width, height);

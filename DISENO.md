@@ -139,7 +139,7 @@ Numeración según `docs/diseno/componentes.png`.
 
 ### 7.3 Botón de ícono (4)
 - 18 × 18, frame normal, ícono 12 × 12 centrado. Para música, sonido y pantalla completa (arriba a la derecha, separados 4 px).
-- Interruptores: el ícono cambia (`sound_on` ↔ `sound_off`); el botón no cambia de color.
+- Interruptores: el ícono cambia (`sound_on` ↔ `sound_off`); el botón no cambia de color. El de música abre el panel de volumen (`LAYOUT.volume`) y muestra `music_off` cuando el volumen es 0.
 
 ### 7.4 Panel y filas de estadísticas (5)
 - `ui/panel.png` en 9-slice. Relleno 8 px.

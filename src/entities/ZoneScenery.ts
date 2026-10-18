@@ -10,6 +10,7 @@ export class ZoneScenery {
   private current: Backdrop;
   private leaving: Backdrop | null = null;
   private blend: Phaser.Tweens.Tween | null = null;
+  private groundMask: Phaser.Display.Masks.GeometryMask | null = null;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -25,7 +26,10 @@ export class ZoneScenery {
 
   changeTo(zone: number): void {
     this.finishBlend();
-    const next = new Backdrop(this.scene, zone, { useDepth: true }).setOffset(this.current.scrolled).setAlpha(0);
+    const next = new Backdrop(this.scene, zone, { useDepth: true })
+      .setOffset(this.current.scrolled)
+      .setGroundMask(this.groundMask)
+      .setAlpha(0);
     this.leaving = this.current;
     this.current = next;
     const leaving = this.leaving;
@@ -41,6 +45,18 @@ export class ZoneScenery {
       },
       onComplete: () => this.finishBlend(),
     });
+  }
+
+  /** Ground px scrolled so far. */
+  get scrolled(): number {
+    return this.current.scrolled;
+  }
+
+  /** Holes in the ground (GroundSystem): applied to this zone's ground and every later one. */
+  setGroundMask(mask: Phaser.Display.Masks.GeometryMask): void {
+    this.groundMask = mask;
+    this.current.setGroundMask(mask);
+    this.leaving?.setGroundMask(mask);
   }
 
   /** True while two zones are blending. */

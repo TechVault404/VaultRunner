@@ -156,10 +156,10 @@ Boot → Preload → Menu ─┬→ CharacterEditor → Menu
 
 | Escena | Contenido |
 |---|---|
-| Menu | Título, vista del personaje actual animado, récord personal, botones Jugar / Personaje / Sonido on-off |
+| Menu | Título, vista del personaje actual animado, récord personal, botones Jugar / Personaje, volumen de la música, efectos on-off y pantalla completa |
 | CharacterEditor | Ver Fase 1 |
 | Game | Juego + HUD |
-| Pause | Overlay: Continuar, Reiniciar, Menú. Se activa con Esc/P o al perder el foco de la pestaña |
+| Pause | Overlay: Continuar, Reiniciar, Música (volumen), Menú. Se activa con Esc/P o al perder el foco de la pestaña |
 | GameOver | Puntaje de la run, distancia, enemigos eliminados, récord, banner "¡NUEVO RÉCORD!" si aplica, Reintentar / Menú |
 
 **HUD (durante la partida):** puntaje actual (arriba izquierda), récord (debajo, más pequeño), distancia en metros, iconos de powerups activos con barra de tiempo restante (arriba derecha), botón de pausa.
@@ -198,7 +198,7 @@ interface SaveData {
   bestScore: number;            // Fase 3
   bestDistance: number;
   stats: { runs: number; totalEnemiesKilled: number };
-  settings: { music: boolean; sfx: boolean };
+  settings: { musicVolume: number; sfx: boolean }; // volumen en % (0 = apagada)
 }
 ```
 - Si los datos guardados están corruptos o son de otra versión, se reemplazan por los valores por defecto sin romper el juego.
@@ -357,7 +357,7 @@ El mundo avanza por zonas según la distancia. Al cambiar de zona hay una transi
 - Opcional: al superar dificultad 0.8, subir la velocidad de reproducción a 1.05× sin cambiar demasiado el tono.
 - Al pausar, la música baja a 30 % de volumen; al morir se detiene con fade de 300 ms y suena el jingle.
 - Respetar la política de autoplay del navegador: el audio se desbloquea con la primera interacción en el menú.
-- Interruptores de música y efectos en el menú, guardados en `settings`.
+- Control de volumen de la música (0–100 %, en pasos de 20 %; 0 = apagada) en el menú y en la pausa, e interruptor de efectos en el menú, guardados en `settings`.
 - **Prompt base para la música:** *"8-bit chiptune loop, [estilo], [BPM] BPM, seamless loop, video game background music, no vocals, 60–90 seconds"*.
 
 ### Criterios de aceptación
@@ -624,3 +624,13 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | 2026-10-16 | Música | Pistas chiptune generadas por código (`tools/audio/music.py`) en lugar de una IA de audio: loops exactos sin cortes. Se pueden reemplazar por otras con el mismo nombre de archivo. |
 | 2026-10-16 | Cartel de zona | También aparece al empezar la partida (ZONA 1). Si cambia la zona mientras hay un cartel, el nuevo lo reemplaza. |
 | 2026-10-16 | Récord en el HUD | Al superarlo, la línea RÉCORD pasa a ámbar, parpadea 3 veces y sigue al puntaje actual. Con récord 0 (primera partida) no se anuncia "¡RÉCORD SUPERADO!". |
+| 2026-10-17 | Bala de la torreta | Se fija al empezar el aviso (600 ms) al carril más cercano a la altura del jugador: bajo (y = 140, se salta) o alto (y = 128, se agacha). La torreta dispara una vez. |
+| 2026-10-17 | Monedas | Desde la Fase 4 solo las ponen los patrones: filas en el suelo y arcos sobre obstáculos fijos y huecos. Se quitan las monedas sueltas. |
+| 2026-10-17 | Pruebas de partida | `?seed=N` repite una partida en cualquier build. Solo en desarrollo: `?startM=N` (empezar en esa distancia) y `?god=1` (no se muere). Esas partidas no guardan récord ni estadísticas. Se quita el botón FIN (DEBUG). |
+| 2026-10-17 | Huecos | Son tiles enteros sin suelo (32 o 48 px). El arte de los bordes termina 4 px antes del tile, así que el hueco se ve 8 px más ancho de lo que es. Corriendo se cae cuando el centro de la hitbox pasa al hueco; en el aire basta con que una parte de la hitbox toque suelo para aterrizar, pero quien ya cayó bajo la superficie no vuelve a subir. |
+| 2026-10-17 | Sierra | Oscila 40 px desde el suelo (periodo 1.6 s). Llega al jugador arriba (se pasa corriendo) o abajo (se salta), al azar según la semilla. |
+| 2026-10-17 | Glitch | Empieza el aviso de 400 ms cuando está a 1 s del jugador (a la velocidad actual): deja 0.6 s para reaccionar al carril nuevo. Una silueta roja parpadea en el carril al que va. |
+| 2026-10-17 | Regla de justicia | Se mide de borde a borde entre pasos de un patrón y entre patrones, con la velocidad a la que se van a encontrar. A una amenaza que avanza hacia el jugador (bug +30 px/s, bala de torreta +150 px/s) se le suma lo que recorre antes de llegar. |
+| 2026-10-17 | Disparos y alturas | El disparo de pie pasa por encima de bugs y torretas (su arte es más bajo que el arma): se les dispara agachado. A los drones, saltando. Los disparos se detienen en los obstáculos sin dañarlos. |
+| 2026-10-17 | Esquive cerrado | +5 cuando un obstáculo pasa a 0–4 px de la hitbox del jugador (sin tocarla). |
+| 2026-10-17 | Volumen de la música | En lugar de encender/apagar, la música tiene volumen: el ícono de música del menú y el botón MÚSICA de la pausa abren un panel con − / +, una barra de 5 bloques y el porcentaje (0–100 % en pasos de 20 %; 0 = APAGADA). El cambio se oye y se guarda al momento; sobre la pausa, la música suena a su nivel real mientras el panel está abierto. Se guarda como `settings.musicVolume`; los guardados con el antiguo `music` se convierten sin perder el personaje ni el récord (encendida = 60 %, apagada = 0). |
