@@ -619,3 +619,8 @@ Cada prompt se envía **junto con este documento completo**. Guardar cada prompt
 | 2026-10-12 | Pose de disparo | Los frames de disparo son una pose de pie: la animación de disparo solo se usa al correr en el suelo. En el aire o agachado se ve solo el destello (`muzzle`) en la punta del arma, y el proyectil sale a la altura del arma en cada pose. |
 | 2026-10-12 | Disparo sostenido | Mantener el botón de disparo (J/K, clic o botón táctil) sigue disparando al ritmo del cooldown, respetando el límite en pantalla. |
 | 2026-10-12 | Hitbox de pie | 12 × 20 con 2 px de margen en los cuatro lados (también abajo), igual que el agachado (12 × 10, filas 12–21 del frame). |
+| 2026-10-16 | Vuelta | La zona 4 dura de 3,000 a 4,999 m: una vuelta son 5,000 m. Desde la vuelta 2 se repiten las mismas distancias por zona, con la dificultad ya alcanzada. El cartel dice "ZONA N - VUELTA N" (la fuente no tiene "·"). |
+| 2026-10-16 | Récord | Solo una partida que llega a GameOver (muerte desde la Fase 4; FIN (DEBUG) por ahora) puede guardar récord y cuenta en estadísticas. Salir desde la pausa (REINICIAR o MENÚ) no guarda. |
+| 2026-10-16 | Música | Pistas chiptune generadas por código (`tools/audio/music.py`) en lugar de una IA de audio: loops exactos sin cortes. Se pueden reemplazar por otras con el mismo nombre de archivo. |
+| 2026-10-16 | Cartel de zona | También aparece al empezar la partida (ZONA 1). Si cambia la zona mientras hay un cartel, el nuevo lo reemplaza. |
+| 2026-10-16 | Récord en el HUD | Al superarlo, la línea RÉCORD pasa a ámbar, parpadea 3 veces y sigue al puntaje actual. Con récord 0 (primera partida) no se anuncia "¡RÉCORD SUPERADO!". |

@@ -13,7 +13,8 @@ export interface AssetManifest {
   }[];
   images: { key: string; url: string }[];
   bitmapFonts: { key: string; textureURL: string; fontDataURL: string }[];
-  audio: { key: string; url: string }[];
+  /** `url` may list several formats (e.g. .ogg + .mp3); Phaser loads the first one the browser supports. */
+  audio: { key: string; url: string | string[] }[];
   notes: {
     player: {
       animations: Record<PlayerAnim, { start: number; end: number }>;

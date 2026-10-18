@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { Backdrop } from '../entities/Backdrop';
 import { CharacterSprite } from '../entities/CharacterSprite';
+import { AUDIO } from '../config';
+import { music } from '../systems/AudioSystem';
 import { InputSystem } from '../systems/InputSystem';
 import { saveSystem } from '../systems/SaveSystem';
 import { COLOR, FONT, fmtDistance, fmtNumber, LAYOUT, SCREEN, UI } from '../theme';
@@ -35,6 +37,7 @@ export class GameOverScene extends Phaser.Scene {
 
   create(): void {
     fadeIn(this);
+    music.playJingle(this.result.newRecord ? AUDIO.music.record : AUDIO.music.gameOver);
     this.inputSystem = new InputSystem(this);
     const layout = LAYOUT.gameOver;
     const character = saveSystem.data.character;

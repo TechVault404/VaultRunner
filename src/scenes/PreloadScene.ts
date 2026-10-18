@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { MANIFEST_KEY, MANIFEST_URL, queueManifest, type AssetManifest } from '../assets';
+import { music } from '../systems/AudioSystem';
 import { startOrientationGuard } from '../systems/OrientationGuard';
 import { COLOR, LAYOUT } from '../theme';
 import { SceneKey } from './keys';
@@ -28,5 +29,6 @@ export class PreloadScene extends Phaser.Scene {
   create(): void {
     this.scene.start(SceneKey.Menu);
     startOrientationGuard(this.game);
+    music.attach(this.game);
   }
 }

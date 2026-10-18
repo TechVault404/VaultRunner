@@ -41,8 +41,29 @@ export class Backdrop {
 
   /** Advances the scenery by `dx` ground pixels. */
   scroll(dx: number): void {
-    this.offset += dx;
+    this.setOffset(this.offset + dx);
+  }
+
+  /** Ground pixels scrolled so far; a new zone's scenery starts from the old one's offset. */
+  get scrolled(): number {
+    return this.offset;
+  }
+
+  setOffset(offset: number): this {
+    this.offset = offset;
     for (const { sprite, factor } of this.layers) sprite.tilePositionX = Math.round(this.offset * factor);
+    return this;
+  }
+
+  /** Only used while blending two zones (spec §10.1). */
+  setAlpha(alpha: number): this {
+    for (const { sprite } of this.layers) sprite.setAlpha(alpha);
+    return this;
+  }
+
+  destroy(): void {
+    for (const { sprite } of this.layers) sprite.destroy();
+    this.layers.length = 0;
   }
 }
 

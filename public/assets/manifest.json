@@ -1100,6 +1100,55 @@
   {
    "key": "ui_type",
    "url": "assets/audio/sfx/ui_type.wav"
+  },
+  {
+   "key": "music_menu",
+   "url": [
+    "assets/audio/music/music_menu.ogg",
+    "assets/audio/music/music_menu.mp3"
+   ]
+  },
+  {
+   "key": "music_zona1",
+   "url": [
+    "assets/audio/music/music_zona1.ogg",
+    "assets/audio/music/music_zona1.mp3"
+   ]
+  },
+  {
+   "key": "music_zona2",
+   "url": [
+    "assets/audio/music/music_zona2.ogg",
+    "assets/audio/music/music_zona2.mp3"
+   ]
+  },
+  {
+   "key": "music_zona3",
+   "url": [
+    "assets/audio/music/music_zona3.ogg",
+    "assets/audio/music/music_zona3.mp3"
+   ]
+  },
+  {
+   "key": "music_zona4",
+   "url": [
+    "assets/audio/music/music_zona4.ogg",
+    "assets/audio/music/music_zona4.mp3"
+   ]
+  },
+  {
+   "key": "jingle_gameover",
+   "url": [
+    "assets/audio/music/jingle_gameover.ogg",
+    "assets/audio/music/jingle_gameover.mp3"
+   ]
+  },
+  {
+   "key": "jingle_record",
+   "url": [
+    "assets/audio/music/jingle_record.ogg",
+    "assets/audio/music/jingle_record.mp3"
+   ]
   }
  ],
  "notes": {

@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { Backdrop } from '../entities/Backdrop';
 import { CharacterSprite } from '../entities/CharacterSprite';
+import { AUDIO } from '../config';
+import { music } from '../systems/AudioSystem';
 import { InputSystem } from '../systems/InputSystem';
 import { saveSystem } from '../systems/SaveSystem';
 import { COLOR, fmtNumber, LAYOUT, SCREEN, UI } from '../theme';
@@ -23,6 +25,7 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     fadeIn(this);
+    music.play(AUDIO.music.menu);
     this.inputSystem = new InputSystem(this);
     const layout = LAYOUT.menu;
     const save = saveSystem.data;
@@ -65,11 +68,12 @@ export class MenuScene extends Phaser.Scene {
     const at = (i: number) => ({ x: x + i * step, y, w: size, h: size });
     const settings = () => saveSystem.data.settings;
 
-    const music: Button = new Button(this, at(0), {
+    const musicButton: Button = new Button(this, at(0), {
       icon: settings().music ? 'music_on' : 'music_off',
       onClick: () => {
         saveSystem.update((data) => void (data.settings.music = !data.settings.music));
-        music.setIcon(settings().music ? 'music_on' : 'music_off');
+        musicButton.setIcon(settings().music ? 'music_on' : 'music_off');
+        music.refresh();
       },
     });
     const sound: Button = new Button(this, at(1), {
@@ -80,6 +84,6 @@ export class MenuScene extends Phaser.Scene {
       },
     });
     const fullscreen = new Button(this, at(2), { icon: 'fullscreen', onClick: () => this.scale.toggleFullscreen() });
-    return [music, sound, fullscreen];
+    return [musicButton, sound, fullscreen];
   }
 }
