@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { music } from '../systems/AudioSystem';
 import { InputSystem } from '../systems/InputSystem';
+import { saveSystem } from '../systems/SaveSystem';
 import { FONT, LAYOUT, SCREEN, UI } from '../theme';
 import { Button } from '../ui/Button';
 import { ButtonList } from '../ui/ButtonList';
@@ -8,6 +9,7 @@ import { addOverlay, addPanel } from '../ui/panels';
 import { pixelText } from '../ui/text';
 import { fadeToScene } from '../ui/transitions';
 import { SceneKey } from './keys';
+import { openVolume } from './VolumeScene';
 
 /** Overlay over the frozen Game scene. Reference: screens/07_pausa.png */
 export class PauseScene extends Phaser.Scene {
@@ -29,10 +31,12 @@ export class PauseScene extends Phaser.Scene {
 
     const { x, y, w, h, step } = layout.buttons;
     const at = (i: number) => ({ x, y: y + i * step, w, h });
+    const musicIcon = () => (saveSystem.data.settings.musicVolume > 0 ? 'music_on' : 'music_off');
     this.buttons = new ButtonList(this.inputSystem, [
       new Button(this, at(0), { label: 'CONTINUAR', icon: 'play', onClick: () => this.resumeGame() }),
       new Button(this, at(1), { label: 'REINICIAR', icon: 'retry', onClick: () => this.leaveTo(SceneKey.Game) }),
-      new Button(this, at(2), { label: 'MENÚ', icon: 'home', onClick: () => this.leaveTo(SceneKey.Menu) }),
+      new Button(this, at(2), { label: 'MÚSICA', icon: musicIcon(), onClick: () => openVolume(this) }),
+      new Button(this, at(3), { label: 'MENÚ', icon: 'home', onClick: () => this.leaveTo(SceneKey.Menu) }),
     ]);
   }
 

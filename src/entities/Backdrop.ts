@@ -16,6 +16,7 @@ const LAYERS: { name: Layer; depth: number; factor: number }[] = [
  */
 export class Backdrop {
   private readonly layers: { sprite: Phaser.GameObjects.TileSprite; factor: number }[] = [];
+  private ground: Phaser.GameObjects.TileSprite | null = null;
   private offset = 0;
 
   constructor(
@@ -36,6 +37,7 @@ export class Backdrop {
         .setOrigin(0)
         .setDepth(useDepth ? DEPTH.ground : 0);
       this.layers.push({ sprite, factor: PARALLAX.ground });
+      this.ground = sprite;
     }
   }
 
@@ -52,6 +54,13 @@ export class Backdrop {
   setOffset(offset: number): this {
     this.offset = offset;
     for (const { sprite, factor } of this.layers) sprite.tilePositionX = Math.round(this.offset * factor);
+    return this;
+  }
+
+  /** Cuts the holes out of the ground (GroundSystem's mask), or removes the cut with null. */
+  setGroundMask(mask: Phaser.Display.Masks.GeometryMask | null): this {
+    if (mask) this.ground?.setMask(mask);
+    else this.ground?.clearMask();
     return this;
   }
 

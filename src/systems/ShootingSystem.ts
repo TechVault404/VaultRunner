@@ -8,7 +8,7 @@ import { FireControl } from './FireControl';
  * limit from FireControl. The weapon chosen in the editor only changes the projectile sprite.
  */
 export class ShootingSystem {
-  /** Arcade group of every pooled projectile (Phase 4 overlaps it with enemies). */
+  /** Arcade group of every pooled projectile (the Game scene overlaps it with enemies). */
   readonly group: Phaser.Physics.Arcade.Group;
   private readonly fireControl = new FireControl();
   private readonly texture: string;

@@ -19,7 +19,7 @@ export function projectileAnim(scene: Phaser.Scene, weapon: number): string {
 
 /**
  * Player shot (spec §9), 6 × 3. Pooled by ShootingSystem: `fire` takes it out of the pool,
- * `kill` puts it back. It hurts enemies (Phase 4) but never obstacles.
+ * `kill` puts it back. It hurts enemies; obstacles stop it unharmed.
  */
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {

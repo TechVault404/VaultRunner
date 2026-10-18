@@ -83,7 +83,7 @@ export const UI = {
   icon: 12,                           // icons.png, powerups.png
   touchMin: 22,                       // área táctil mínima: ≥ 44 px reales con el lienzo a ×2 (pantallas ≥ 640 × 360)
   touch: { size: 32, alpha: 0.55, margin: 8 },
-  overlay: { menu: 0.25, editor: 0.45, banner: 0.6, pause: 0.65, gameOver: 0.7 },
+  overlay: { menu: 0.25, editor: 0.45, volume: 0.5, banner: 0.6, pause: 0.65, gameOver: 0.7 },
   selector: { h: 13, labelDx: 2, labelDy: -8, valueDy: 3, arrowLeftDx: 2, arrowRightInset: 13, arrowDy: 1 },
   swatch: { light: 2, shade: 2, frame: 2 }, // filas de luz arriba, de sombra abajo, marco blanco de selección
 } as const;
@@ -136,7 +136,10 @@ export const TIMING = {
   recordToast: 1500,
   invulnBlinkHz: 10,
   cursorBlink: 400,         // medio periodo del cursor "_" del campo de nombre
-  deathShake: 200, deathSlowMo: 600,
+  deathShake: 200, deathSlowMo: 600, deathSlowMoScale: 0.5, // cámara lenta 0.5× durante 600 ms al morir
+  turretWarnBlinkHz: 8,     // aviso de la torreta: alterna los frames warn/idle
+  turretFireFrame: 150,     // cuánto se ve el frame "fire" al disparar
+  glitchGhostBlinkHz: 10,   // silueta del Glitch en el carril al que va a saltar
   powerupBob: { amplitude: 2, period: 1200 },
   menuIdleBob: { amplitude: 1, period: 800 },
 } as const;
@@ -183,14 +186,24 @@ export const LAYOUT = {
     save: box(202, 150, 113, 18),
   },
   game: {
-    debugEnd: box(130, 5, 60, 16),               // temporal hasta la Fase 4
     // Botones táctiles (DISENO §7.10), 32 × 32: agacharse abajo-izquierda, disparar abajo-derecha
     touch: { crouch: { x: 8, y: 140 }, shoot: { x: 280, y: 140 } },
   },
   pause: {
-    panel: box(104, 40, 112, 100),
-    title: { y: 50 },
-    buttons: { x: 116, y: 72, w: 88, h: 16, step: 20 },
+    panel: box(104, 32, 112, 116),
+    title: { y: 42 },
+    buttons: { x: 116, y: 64, w: 88, h: 16, step: 20 }, // CONTINUAR, REINICIAR, MÚSICA, MENÚ
+  },
+  // Panel de volumen de la música (sobre el menú o la pausa)
+  volume: {
+    panel: box(80, 40, 160, 100),
+    title: { y: 49 },
+    minus: box(98, 64, 22, 18),
+    plus: box(200, 64, 22, 18),
+    bar: { x: 131, y: 68, w: 10, h: 10, step: 12 }, // un bloque por paso de volumen
+    value: { y: 89 },
+    done: box(124, 102, 72, 18),
+    hint: { y: 128 },                             // dentro del panel, para no tapar lo de abajo
   },
   // Aviso "Gira tu teléfono" en vertical (screens/10_gira_telefono.png): lienzo de 180 × 320
   rotate: {

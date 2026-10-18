@@ -3,6 +3,7 @@ import { Backdrop } from '../entities/Backdrop';
 import { CharacterSprite } from '../entities/CharacterSprite';
 import { AUDIO } from '../config';
 import { music } from '../systems/AudioSystem';
+import { openVolume } from './VolumeScene';
 import { InputSystem } from '../systems/InputSystem';
 import { saveSystem } from '../systems/SaveSystem';
 import { COLOR, fmtNumber, LAYOUT, SCREEN, UI } from '../theme';
@@ -62,20 +63,19 @@ export class MenuScene extends Phaser.Scene {
     this.backdrop.scroll((LAYOUT.menu.scrollSpeed * delta) / 1000);
   }
 
-  /** Music, sound and fullscreen icon buttons, top-right (DISENO §7.3). */
+  /** Music (opens the volume panel), sound and fullscreen icon buttons, top-right (DISENO §7.3). */
   private createSettingsButtons(): Button[] {
     const { x, y, step, size } = LAYOUT.menu.settings;
     const at = (i: number) => ({ x: x + i * step, y, w: size, h: size });
     const settings = () => saveSystem.data.settings;
 
+    const musicIcon = () => (settings().musicVolume > 0 ? 'music_on' : 'music_off');
     const musicButton: Button = new Button(this, at(0), {
-      icon: settings().music ? 'music_on' : 'music_off',
-      onClick: () => {
-        saveSystem.update((data) => void (data.settings.music = !data.settings.music));
-        musicButton.setIcon(settings().music ? 'music_on' : 'music_off');
-        music.refresh();
-      },
+      icon: musicIcon(),
+      onClick: () => openVolume(this),
     });
+    // Back from the volume panel: the icon shows whether the music is off.
+    this.events.on(Phaser.Scenes.Events.RESUME, () => musicButton.setIcon(musicIcon()));
     const sound: Button = new Button(this, at(1), {
       icon: settings().sfx ? 'sound_on' : 'sound_off',
       onClick: () => {

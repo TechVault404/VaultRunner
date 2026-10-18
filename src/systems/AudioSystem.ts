@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { AUDIO } from '../config';
 import { saveSystem } from './SaveSystem';
+import { musicGain } from './volume';
 
 export type SfxKey = keyof typeof AUDIO.sfx;
 
@@ -27,7 +28,7 @@ interface Voice {
 /**
  * Background music (spec §10.4): one looping track at a time with crossfades, a lower level
  * while paused, and one-shot jingles. Driven by the game's STEP event, so fades carry on
- * across scene changes and while the Game scene is paused. Respects `settings.music`, and
+ * across scene changes and while the Game scene is paused. Follows `settings.musicVolume` (0 = off), and
  * waits for the browser to unlock audio (first interaction) before starting.
  */
 export class MusicPlayer {
@@ -65,7 +66,7 @@ export class MusicPlayer {
     this.stopJingle();
     const game = this.game;
     if (!game || !this.canPlay() || !game.cache.audio.exists(key)) return;
-    this.jingle = game.sound.add(key, { volume: AUDIO.music.jingleVolume });
+    this.jingle = game.sound.add(key, { volume: this.jingleGain() });
     this.jingle.once(Phaser.Sound.Events.COMPLETE, () => this.stopJingle());
     this.jingle.play();
   }
@@ -76,6 +77,10 @@ export class MusicPlayer {
     this.applyVolumes();
   }
 
+  get isDucked(): boolean {
+    return this.ducked;
+  }
+
   /** Playback rate of the current track (faster at high difficulty). */
   setRate(rate: number): void {
     if (rate === this.rate) return;
@@ -83,7 +88,7 @@ export class MusicPlayer {
     this.voices.find((voice) => voice.key === this.wanted)?.sound.setRate(rate);
   }
 
-  /** Call after the music setting changes: stops right away when off, resumes the wanted track when on. */
+  /** Call after the volume changes: applies it now, stops at 0, resumes the wanted track above 0. */
   refresh(): void {
     if (!this.canPlay()) {
       for (const voice of this.voices) this.fade(voice, 0, 0);
@@ -91,6 +96,7 @@ export class MusicPlayer {
       return;
     }
     if (this.wanted) this.play(this.wanted);
+    this.applyVolumes();
   }
 
   /** Key of the track that is (or will be) playing, for tests and debugging. */
@@ -99,7 +105,7 @@ export class MusicPlayer {
   }
 
   private canPlay(): boolean {
-    return !!this.game && saveSystem.data.settings.music && !this.game.sound.locked;
+    return !!this.game && saveSystem.data.settings.musicVolume > 0 && !this.game.sound.locked;
   }
 
   private startVoice(key: string, fadeMs: number): void {
@@ -137,9 +143,14 @@ export class MusicPlayer {
   }
 
   private applyVolumes(): void {
-    const { volume, pausedLevel } = AUDIO.music;
-    const duck = this.ducked ? pausedLevel : 1;
+    const volume = musicGain(saveSystem.data.settings.musicVolume);
+    const duck = this.ducked ? AUDIO.music.pausedLevel : 1;
     for (const voice of this.voices) voice.sound.setVolume(volume * voice.level * duck);
+    (this.jingle as Voice['sound'] | null)?.setVolume(this.jingleGain());
+  }
+
+  private jingleGain(): number {
+    return Math.min(1, musicGain(saveSystem.data.settings.musicVolume) * AUDIO.music.jingleBoost);
   }
 
   private stopJingle(): void {

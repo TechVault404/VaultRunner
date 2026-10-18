@@ -17,7 +17,9 @@ describe('ScoreSystem', () => {
     expect(score.award('groundEnemy')).toBe(50);
     expect(score.award('flyingEnemy')).toBe(50);
     expect(score.award('turret')).toBe(100);
-    expect(score.score).toBe(210);
+    expect(score.award('glitch')).toBe(150);
+    expect(score.award('closeDodge')).toBe(5);
+    expect(score.score).toBe(365);
   });
 
   it('applies the multiplier to everything, distance included', () => {

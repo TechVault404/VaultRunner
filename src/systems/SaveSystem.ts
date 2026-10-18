@@ -1,5 +1,6 @@
-import { SAVE } from '../config';
+import { AUDIO, SAVE } from '../config';
 import { OPTION_COUNTS } from './CharacterOptions';
+import { isVolume } from './volume';
 
 /** Character built in the editor (spec §8). Each number is an option index. */
 export interface CharacterConfig {
@@ -19,7 +20,8 @@ export interface SaveData {
   bestScore: number;
   bestDistance: number;
   stats: { runs: number; totalEnemiesKilled: number };
-  settings: { music: boolean; sfx: boolean };
+  /** `musicVolume` in % (0 = off), in steps of AUDIO.music.volumeStep. */
+  settings: { musicVolume: number; sfx: boolean };
 }
 
 /** Minimal storage surface so tests can inject an in-memory implementation. */
@@ -36,7 +38,7 @@ export function createDefaultSave(): SaveData {
     bestScore: 0,
     bestDistance: 0,
     stats: { runs: 0, totalEnemiesKilled: 0 },
-    settings: { music: true, sfx: true },
+    settings: { musicVolume: AUDIO.music.defaultVolume, sfx: true },
   };
 }
 
@@ -74,9 +76,21 @@ function isSaveData(value: unknown): value is SaveData {
     isIndex(stats.runs) &&
     isIndex(stats.totalEnemiesKilled) &&
     isRecord(settings) &&
-    typeof settings.music === 'boolean' &&
+    isVolume(settings.musicVolume) &&
     typeof settings.sfx === 'boolean'
   );
+}
+
+/**
+ * Saves from before the volume control had a music on/off switch: on becomes the default
+ * volume, off becomes 0. Upgraded in place so the character and the record are kept.
+ */
+function upgradeSettings(value: unknown): void {
+  if (!isRecord(value) || !isRecord(value.settings)) return;
+  const settings = value.settings;
+  if (settings.musicVolume !== undefined || typeof settings.music !== 'boolean') return;
+  settings.musicVolume = settings.music ? AUDIO.music.defaultVolume : 0;
+  delete settings.music;
 }
 
 /**
@@ -87,6 +101,7 @@ export function parseSave(raw: string | null): SaveData {
   if (raw === null) return createDefaultSave();
   try {
     const parsed: unknown = JSON.parse(raw);
+    upgradeSettings(parsed);
     return isSaveData(parsed) ? parsed : createDefaultSave();
   } catch {
     return createDefaultSave();
