@@ -159,6 +159,8 @@ export const AUDIO = {
     ui_random: 0.5,
     ui_reset: 0.45,
     ui_type: 0.4,
+    powerup_pickup: 0.5,
+    powerup_end: 0.45,
   },
 } as const;
 
@@ -283,6 +285,48 @@ export const SPAWN = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Sections filled in later phases
+// Powerups (spec §12)
 // ---------------------------------------------------------------------------
-export const POWERUPS = {} as const; // Phase 5
+/** Powerup kinds, in the order of the `powerups` sheet (manifest frameNames). */
+export const POWERUP_KINDS = ['shield', 'magnet', 'doublejump', 'tripleshot', 'x2', 'turbo'] as const;
+export type PowerUpKind = (typeof POWERUP_KINDS)[number];
+
+export const POWERUPS = {
+  /** One powerup every this many meters (random in between), counted from the previous one. */
+  everyM: { min: 250, max: 400 },
+  /** Chance of each kind (relative weights, %). A kind not allowed yet is left out and the rest share its chance. */
+  chance: { shield: 25, magnet: 20, doublejump: 15, tripleshot: 15, x2: 15, turbo: 10 } satisfies Record<PowerUpKind, number>,
+  /** Distance (m) from which each kind can appear. */
+  minM: { shield: 0, magnet: 0, doublejump: 0, tripleshot: 0, x2: 0, turbo: 800 } satisfies Record<PowerUpKind, number>,
+  /** How long each effect lasts (ms); picking the same one again starts it over. The shield also ends on a hit. */
+  durationMs: {
+    shield: 15000,
+    magnet: 10000,
+    doublejump: 12000,
+    tripleshot: 8000,
+    x2: 10000,
+    turbo: 3000,
+  } satisfies Record<PowerUpKind, number>,
+  /** The pickup: a 12 × 12 icon floating at short-jump height (center y), in its own free slot of the world. */
+  pickup: { size: 12, hitbox: { dx: 0, dy: 0, w: 12, h: 12 }, centerY: 114 },
+  /** Free room before and after a pickup, on top of the fairness gap (px). */
+  clearancePx: 32,
+  /** Invulnerability after the shield breaks or the turbo ends (ms). */
+  invulnMs: 1000,
+  magnet: {
+    /** Coins whose center is this close to the player's center start flying to the player (px). */
+    radius: 80,
+    /** Flying speed on top of the world speed (px/s). */
+    pullSpeed: 220,
+  },
+  doublejump: { maxJumps: 2 },
+  tripleshot: {
+    /** Fan of shots (degrees; negative = up). */
+    anglesDeg: [-10, 0, 10],
+    cooldownMs: 200,
+    maxOnScreen: 9,
+  },
+  x2: { multiplier: 2 },
+  turbo: { speedMultiplier: 1.8 },
+  poolSize: 2,
+} as const;

@@ -1102,6 +1102,14 @@
    "url": "assets/audio/sfx/ui_type.wav"
   },
   {
+   "key": "powerup_pickup",
+   "url": "assets/audio/sfx/powerup_pickup.wav"
+  },
+  {
+   "key": "powerup_end",
+   "url": "assets/audio/sfx/powerup_end.wav"
+  },
+  {
    "key": "music_menu",
    "url": [
     "assets/audio/music/music_menu.ogg",

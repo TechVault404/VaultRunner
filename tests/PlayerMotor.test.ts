@@ -160,4 +160,27 @@ describe('PlayerMotor', () => {
     run(double, 1, { jumpHeld: true });
     expect(double.vy).toBeGreaterThan(PLAYER.jumpVelocity); // third jump refused
   });
+
+  it('bounces out of a hole (shield) and lands back on the ground', () => {
+    const motor = new PlayerMotor(GROUND);
+    // Walks off into a hole until the feet are deep enough to count as a fall.
+    while (motor.feetY <= GROUND + PLAYER.holeDeathDepth) run(motor, 1, {}, null);
+    motor.bounce();
+    const top = run(motor, 120); // the floor is back (invulnerable)
+    expect(top).toBeLessThan(GROUND - 40);
+    expect(motor.grounded).toBe(true);
+    expect(motor.feetY).toBe(GROUND);
+  });
+
+  it('a bounce keeps the double jump available', () => {
+    const motor = new PlayerMotor(GROUND);
+    motor.maxJumps = 2;
+    while (motor.feetY <= GROUND + PLAYER.holeDeathDepth) run(motor, 1, {}, null);
+    motor.bounce();
+    run(motor, 10);
+    const vyBefore = motor.vy;
+    run(motor, 1, { jumpPressed: true, jumpHeld: true });
+    expect(motor.vy).toBeLessThan(vyBefore);
+    expect(motor.vy).toBe(PLAYER.jumpVelocity + (PLAYER.gravity * FRAME) / 1000);
+  });
 });

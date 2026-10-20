@@ -12,7 +12,12 @@ export interface FireConfig {
 export class FireControl {
   private sinceShot = Infinity;
 
-  constructor(private readonly config: FireConfig = SHOOTING) {}
+  constructor(private config: FireConfig = SHOOTING) {}
+
+  /** Switches the limits (triple shot on/off); the cooldown already running is kept. */
+  setConfig(config: FireConfig): void {
+    this.config = config;
+  }
 
   update(deltaMs: number): void {
     this.sinceShot += deltaMs;

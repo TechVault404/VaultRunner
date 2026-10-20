@@ -1,16 +1,23 @@
 import Phaser from 'phaser';
-import { SPAWN } from '../config';
+import { POWERUPS, SPAWN } from '../config';
 import { Bug, Drone } from '../entities/Enemy';
 import { EnemyBullet } from '../entities/EnemyBullet';
 import { Glitch } from '../entities/Glitch';
 import { Obstacle, type ObstacleKind } from '../entities/Obstacle';
+import { PowerUp } from '../entities/PowerUp';
 import { Turret } from '../entities/Turret';
 import type { WorldSprite, WorldTick } from '../entities/WorldSprite';
 import { SCREEN } from '../theme';
 import type { CoinSystem } from './CoinSystem';
 import type { GroundSystem } from './GroundSystem';
 import type { Rng } from './Rng';
-import { SpawnPlanner, type PlannedCoin, type PlannedThreat, type SpeedCurve } from './SpawnPlanner';
+import {
+  SpawnPlanner,
+  type PlannedCoin,
+  type PlannedPowerUp,
+  type PlannedThreat,
+  type SpeedCurve,
+} from './SpawnPlanner';
 
 type Pool = Phaser.Physics.Arcade.Group;
 
@@ -26,9 +33,12 @@ export class SpawnSystem {
   readonly turrets: Pool;
   readonly glitches: Pool;
   readonly bullets: Pool;
+  /** Powerup pickups (spec §12). */
+  readonly powerUps: Pool;
   private readonly planner: SpawnPlanner;
   private readonly threats: PlannedThreat[] = [];
   private readonly coinQueue: PlannedCoin[] = [];
+  private readonly powerUpQueue: PlannedPowerUp[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -50,6 +60,7 @@ export class SpawnSystem {
     this.turrets = pool(Turret, pools.turrets);
     this.glitches = pool(Glitch, pools.glitches);
     this.bullets = pool(EnemyBullet, pools.bullets);
+    this.powerUps = pool(PowerUp, POWERUPS.poolSize);
   }
 
   /** Everything shots can hurt. */
@@ -64,9 +75,10 @@ export class SpawnSystem {
 
   update(world: WorldTick): void {
     const { scrolled } = world;
-    const { threats, coins } = this.planner.planUntil(scrolled + SCREEN.w + SPAWN.lookaheadPx);
+    const { threats, coins, powerUps } = this.planner.planUntil(scrolled + SCREEN.w + SPAWN.lookaheadPx);
     this.threats.push(...threats);
     this.coinQueue.push(...coins);
+    this.powerUpQueue.push(...powerUps);
 
     const enterX = scrolled + SCREEN.w + SPAWN.spawnMarginPx;
     while (this.threats.length > 0 && this.threats[0]!.x <= enterX) this.spawn(this.threats.shift()!, world);
@@ -75,8 +87,12 @@ export class SpawnSystem {
       const coin = this.coinQueue.shift()!;
       this.coins.add(coin.x, coin.y, scrolled);
     }
+    while (this.powerUpQueue.length > 0 && this.powerUpQueue[0]!.x <= enterX) {
+      const { kind, x } = this.powerUpQueue.shift()!;
+      this.place(this.powerUps, world, (powerUp: PowerUp) => powerUp.spawn(kind, x));
+    }
 
-    for (const pool of this.dangerPools) {
+    for (const pool of [...this.dangerPools, this.powerUps]) {
       for (const thing of pool.getChildren() as WorldSprite[]) {
         if (!thing.active) continue;
         thing.tick(world);
