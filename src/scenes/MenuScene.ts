@@ -83,6 +83,8 @@ export class MenuScene extends Phaser.Scene {
         sound.setIcon(settings().sfx ? 'sound_on' : 'sound_off');
       },
     });
+    // Fullscreen option (spec §13.3), only where the browser has it (not on iPhone Safari).
+    if (!this.scale.fullscreen.available) return [musicButton, sound];
     const fullscreen = new Button(this, at(2), { icon: 'fullscreen', onClick: () => this.scale.toggleFullscreen() });
     return [musicButton, sound, fullscreen];
   }

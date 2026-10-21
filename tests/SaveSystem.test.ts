@@ -119,4 +119,16 @@ describe('SaveSystem', () => {
     system.reset();
     expect(JSON.parse(storage.raw() ?? '')).toEqual(createDefaultSave());
   });
+
+  it('upgrades saves from before the tutorial: shown again only to who never played', () => {
+    const old = (runs: number) => {
+      const { tutorialDone: _, ...rest } = { ...createDefaultSave(), bestScore: 500, stats: { runs, totalEnemiesKilled: 2 } };
+      return JSON.stringify(rest);
+    };
+    const played = parseSave(old(4));
+    expect(played.tutorialDone).toBe(true);
+    expect(played.bestScore).toBe(500);
+    expect(parseSave(old(0)).tutorialDone).toBe(false);
+    expect(createDefaultSave().tutorialDone).toBe(false);
+  });
 });

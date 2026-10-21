@@ -20,6 +20,8 @@ export interface SaveData {
   bestScore: number;
   bestDistance: number;
   stats: { runs: number; totalEnemiesKilled: number };
+  /** The first-run tutorial (spec §13.2) was completed: it is not shown again. */
+  tutorialDone: boolean;
   /** `musicVolume` in % (0 = off), in steps of AUDIO.music.volumeStep. */
   settings: { musicVolume: number; sfx: boolean };
 }
@@ -38,6 +40,7 @@ export function createDefaultSave(): SaveData {
     bestScore: 0,
     bestDistance: 0,
     stats: { runs: 0, totalEnemiesKilled: 0 },
+    tutorialDone: false,
     settings: { musicVolume: AUDIO.music.defaultVolume, sfx: true },
   };
 }
@@ -75,6 +78,7 @@ function isSaveData(value: unknown): value is SaveData {
     isRecord(stats) &&
     isIndex(stats.runs) &&
     isIndex(stats.totalEnemiesKilled) &&
+    typeof value.tutorialDone === 'boolean' &&
     isRecord(settings) &&
     isVolume(settings.musicVolume) &&
     typeof settings.sfx === 'boolean'
@@ -93,6 +97,13 @@ function upgradeSettings(value: unknown): void {
   delete settings.music;
 }
 
+/** Saves from before the tutorial: whoever already played a run has no need for it. */
+function upgradeTutorial(value: unknown): void {
+  if (!isRecord(value) || value.tutorialDone !== undefined) return;
+  const runs = isRecord(value.stats) ? value.stats.runs : 0;
+  value.tutorialDone = typeof runs === 'number' && runs > 0;
+}
+
 /**
  * Parses a raw stored string. Anything missing, corrupt, malformed or from another
  * schema version yields the defaults instead of throwing (spec §7).
@@ -102,6 +113,7 @@ export function parseSave(raw: string | null): SaveData {
   try {
     const parsed: unknown = JSON.parse(raw);
     upgradeSettings(parsed);
+    upgradeTutorial(parsed);
     return isSaveData(parsed) ? parsed : createDefaultSave();
   } catch {
     return createDefaultSave();

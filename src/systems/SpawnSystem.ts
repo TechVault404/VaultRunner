@@ -8,6 +8,7 @@ import { PowerUp } from '../entities/PowerUp';
 import { Turret } from '../entities/Turret';
 import type { WorldSprite, WorldTick } from '../entities/WorldSprite';
 import { SCREEN } from '../theme';
+import { playSfx } from './AudioSystem';
 import type { CoinSystem } from './CoinSystem';
 import type { GroundSystem } from './GroundSystem';
 import type { Rng } from './Rng';
@@ -41,7 +42,7 @@ export class SpawnSystem {
   private readonly powerUpQueue: PlannedPowerUp[] = [];
 
   constructor(
-    scene: Phaser.Scene,
+    private readonly scene: Phaser.Scene,
     rng: Rng,
     curve: SpeedCurve,
     startX: number,
@@ -73,14 +74,22 @@ export class SpawnSystem {
     return [this.obstacles, ...this.enemyPools, this.bullets];
   }
 
-  update(world: WorldTick): void {
+  /** `hold` (first-run tutorial): nothing new comes in; planned things not on screen yet are dropped. */
+  update(world: WorldTick, hold = false): void {
     const { scrolled } = world;
-    const { threats, coins, powerUps } = this.planner.planUntil(scrolled + SCREEN.w + SPAWN.lookaheadPx);
-    this.threats.push(...threats);
-    this.coinQueue.push(...coins);
-    this.powerUpQueue.push(...powerUps);
-
     const enterX = scrolled + SCREEN.w + SPAWN.spawnMarginPx;
+    if (hold) {
+      this.threats.length = 0;
+      this.coinQueue.length = 0;
+      this.powerUpQueue.length = 0;
+      this.planner.holdUntil(enterX);
+    } else {
+      const { threats, coins, powerUps } = this.planner.planUntil(scrolled + SCREEN.w + SPAWN.lookaheadPx);
+      this.threats.push(...threats);
+      this.coinQueue.push(...coins);
+      this.powerUpQueue.push(...powerUps);
+    }
+
     while (this.threats.length > 0 && this.threats[0]!.x <= enterX) this.spawn(this.threats.shift()!, world);
     this.coinQueue.sort((a, b) => a.x - b.x);
     while (this.coinQueue.length > 0 && this.coinQueue[0]!.x <= enterX) {
@@ -140,6 +149,9 @@ export class SpawnSystem {
 
   /** Turret shot; the bullets pool is updated after the turrets, so it is drawn this frame. */
   private fire(right: number, centerY: number): void {
-    (this.bullets.get() as EnemyBullet | null)?.spawn(right, centerY);
+    const bullet = this.bullets.get() as EnemyBullet | null;
+    if (!bullet) return;
+    bullet.spawn(right, centerY);
+    playSfx(this.scene, 'turret_shot');
   }
 }

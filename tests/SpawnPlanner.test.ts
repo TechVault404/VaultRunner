@@ -163,3 +163,14 @@ describe('SpawnPlanner powerups', () => {
     expect(planWorld(42).powerUps).toEqual(planWorld(42).powerUps);
   });
 });
+
+describe('SpawnPlanner hold (tutorial)', () => {
+  it('plans nothing before the point it was held to, and stays fair after it', () => {
+    const planner = new SpawnPlanner(new Rng(3), curve, 0);
+    const heldTo = 3000;
+    planner.holdUntil(heldTo);
+    const { threats } = planner.planUntil(heldTo + 3000);
+    expect(threats.length).toBeGreaterThan(0);
+    for (const t of threats) expect(t.x).toBeGreaterThanOrEqual(heldTo);
+  });
+});

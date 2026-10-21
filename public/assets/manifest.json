@@ -1110,6 +1110,62 @@
    "url": "assets/audio/sfx/powerup_end.wav"
   },
   {
+   "key": "jump",
+   "url": "assets/audio/sfx/jump.wav"
+  },
+  {
+   "key": "double_jump",
+   "url": "assets/audio/sfx/double_jump.wav"
+  },
+  {
+   "key": "land",
+   "url": "assets/audio/sfx/land.wav"
+  },
+  {
+   "key": "crouch",
+   "url": "assets/audio/sfx/crouch.wav"
+  },
+  {
+   "key": "shoot_0",
+   "url": "assets/audio/sfx/shoot_0.wav"
+  },
+  {
+   "key": "shoot_1",
+   "url": "assets/audio/sfx/shoot_1.wav"
+  },
+  {
+   "key": "shoot_2",
+   "url": "assets/audio/sfx/shoot_2.wav"
+  },
+  {
+   "key": "enemy_hit",
+   "url": "assets/audio/sfx/enemy_hit.wav"
+  },
+  {
+   "key": "enemy_explode",
+   "url": "assets/audio/sfx/enemy_explode.wav"
+  },
+  {
+   "key": "turret_shot",
+   "url": "assets/audio/sfx/turret_shot.wav"
+  },
+  {
+   "key": "coin",
+   "url": "assets/audio/sfx/coin.wav"
+  },
+  {
+   "key": "shield_break",
+   "url": "assets/audio/sfx/shield_break.wav"
+  },
+  {
+   "key": "zone_change",
+   "url": "assets/audio/sfx/zone_change.wav"
+  },
+  {
+   "key": "death",
+   "url": "assets/audio/sfx/death.wav"
+  },
+  {
    "key": "music_menu",
    "url": [
     "assets/audio/music/music_menu.ogg",

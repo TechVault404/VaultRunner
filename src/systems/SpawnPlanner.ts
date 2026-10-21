@@ -104,6 +104,14 @@ export class SpawnPlanner {
     return this.cursor;
   }
 
+  /**
+   * Keeps the world empty up to `enterX` (tutorial): the next threat can't come before it.
+   * Only moves forward; what was already planned stays.
+   */
+  holdUntil(enterX: number): void {
+    this.cursor = Math.max(this.cursor, enterX - fairGap(this.speedAtX(enterX), this.config));
+  }
+
   /** Plans patterns (and powerups when due) until the world is covered up to `worldX`. */
   planUntil(worldX: number): PlannedWorld {
     const world: PlannedWorld = { threats: [], coins: [], powerUps: [] };

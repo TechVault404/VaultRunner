@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { AUDIO, PLAYER, SCORE, WORLD } from '../config';
 import type { Coin } from '../entities/Coin';
+import { Dust } from '../entities/Dust';
 import { explode } from '../entities/effects';
 import { Enemy } from '../entities/Enemy';
 import type { Obstacle } from '../entities/Obstacle';
@@ -10,21 +11,23 @@ import type { PowerUp } from '../entities/PowerUp';
 import type { Projectile } from '../entities/Projectile';
 import type { WorldSprite } from '../entities/WorldSprite';
 import { ZoneScenery } from '../entities/ZoneScenery';
-import { music, playSfx } from '../systems/AudioSystem';
+import { music, playSfx, type SfxKey } from '../systems/AudioSystem';
 import { BiomeSystem, type ZoneState } from '../systems/BiomeSystem';
 import { CoinSystem } from '../systems/CoinSystem';
 import { DifficultySystem } from '../systems/DifficultySystem';
 import { GroundSystem } from '../systems/GroundSystem';
 import { hasFloor } from '../systems/holes';
-import { InputSystem } from '../systems/InputSystem';
+import { InputSystem, type InputDevice } from '../systems/InputSystem';
 import { PORTRAIT_EVENT } from '../systems/OrientationGuard';
 import { PowerUpSystem, type HitOutcome } from '../systems/PowerUpSystem';
 import { Rng } from '../systems/Rng';
 import { parseRunParams, type RunParams } from '../systems/RunParams';
 import { saveSystem } from '../systems/SaveSystem';
 import { applyRunResult, ScoreSystem } from '../systems/ScoreSystem';
+import { CoinStreak } from '../systems/sfx';
 import { ShootingSystem } from '../systems/ShootingSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
+import { Tutorial, type TutorialStep } from '../systems/Tutorial';
 import { ANIM_FPS, DEPTH, SCREEN, SHAKE, TIMING } from '../theme';
 import { Announcer } from '../ui/Announcer';
 import { floatingText } from '../ui/FloatingText';
@@ -64,6 +67,12 @@ export class GameScene extends Phaser.Scene {
   private effects!: PlayerEffects;
   private hud!: Hud;
   private announcer!: Announcer;
+  private dust!: Dust;
+  private coinStreak!: CoinStreak;
+  private shotSound!: SfxKey;
+  /** First run only (spec §13.2); null when not shown. */
+  private tutorial: Tutorial | null = null;
+  private dismissTutorialStep: (() => void) | null = null;
   /** Meters run in this run. */
   private distance = 0;
   private zone = 1;
@@ -113,6 +122,9 @@ export class GameScene extends Phaser.Scene {
     this.player = new Player(this, character, SCREEN.groundY);
     this.powerUps = new PowerUpSystem();
     this.effects = new PlayerEffects(this, this.player);
+    this.dust = new Dust(this);
+    this.coinStreak = new CoinStreak();
+    this.shotSound = `shoot_${character.weapon}` as SfxKey;
     this.shooting = new ShootingSystem(this, character.weapon);
     this.coins = new CoinSystem(this);
     this.ground = new GroundSystem(this, this.scenery);
@@ -145,6 +157,10 @@ export class GameScene extends Phaser.Scene {
 
     this.announcer.zone(start.zone, start.lap);
     music.play(this.zoneTrack(start.zone));
+    // Test runs (?startM, ?god) skip the tutorial.
+    this.tutorial = saveSystem.data.tutorialDone || this.params.debug ? null : new Tutorial();
+    this.dismissTutorialStep = null;
+    this.showTutorialStep();
 
     this.game.events.on(Phaser.Core.Events.BLUR, this.openPause, this);
     this.game.events.on(Phaser.Core.Events.HIDDEN, this.openPause, this);
@@ -179,14 +195,20 @@ export class GameScene extends Phaser.Scene {
     this.player.update(delta, input, this.floorUnderPlayer());
     const { motor } = this.player;
     if (!motor.grounded && motor.feetY > SCREEN.groundY + PLAYER.holeDeathDepth) this.fallInHole();
+    if (!this.dying) this.playMotorSounds();
+    this.dust.update(delta, this.scenery.scrolled, this.player.sprite.x, motor.grounded && !this.dying, motor.events.landed);
 
     if (!this.dying) {
       this.shooting.update(delta, this.powerUps.fire);
       // Holding the button keeps firing at the cooldown rate; a tap shorter than a frame still fires.
       if (input.isDown('shoot') || input.justPressed('shoot')) {
         const { x, y } = this.player.muzzlePoint;
-        if (this.shooting.tryFire(x, y, this.powerUps.shotAngles)) this.player.onShot();
+        if (this.shooting.tryFire(x, y, this.powerUps.shotAngles)) {
+          this.player.onShot();
+          playSfx(this, this.shotSound);
+        }
       }
+      this.updateTutorial();
       this.effects.update(delta, this.powerUps);
       this.hud.setPowerUps(this.powerUps.active);
     }
@@ -213,7 +235,9 @@ export class GameScene extends Phaser.Scene {
       this.distance += meters;
       this.score.addDistance(meters);
     }
-    this.spawner.update({ deltaMs, scrolled: this.scenery.scrolled, speed, player: { bounds: this.player.bounds } });
+    const world = { deltaMs, scrolled: this.scenery.scrolled, speed, player: { bounds: this.player.bounds } };
+    // The tutorial holds the threats back until its three steps are done.
+    this.spawner.update(world, this.tutorial !== null && !this.tutorial.done);
     if (this.dying) return;
     const { centerX, centerY } = this.player.bounds;
     const magnet = this.powerUps.isActive('magnet');
@@ -224,6 +248,7 @@ export class GameScene extends Phaser.Scene {
       this.zone = zone.zone;
       this.scenery.changeTo(zone.zone);
       this.announcer.zone(zone.zone, zone.lap);
+      playSfx(this, 'zone_change');
       music.play(this.zoneTrack(zone.zone), AUDIO.music.crossfadeMs);
     }
     const { fastRate, fastFromLevel } = AUDIO.music;
@@ -248,6 +273,7 @@ export class GameScene extends Phaser.Scene {
     this.coinCount += 1;
     const points = this.score.award('coin');
     floatingText(this, x, y - coin.height, `+${points}`);
+    playSfx(this, 'coin', this.coinStreak.next(this.time.now));
     this.sparkAt(x, y);
     this.refreshScore();
   }
@@ -272,7 +298,7 @@ export class GameScene extends Phaser.Scene {
   private shotHits(shot: Projectile, enemy: Enemy): void {
     if (!shot.active || !enemy.active || this.dying) return;
     shot.kill();
-    if (!enemy.hit()) return;
+    if (!enemy.hit()) return playSfx(this, 'enemy_hit');
     this.killEnemy(enemy);
     // Kill feedback (DISENO §10): a 40 ms hit-stop on top of the light shake.
     this.freezeMs = TIMING.hitStop;
@@ -283,6 +309,7 @@ export class GameScene extends Phaser.Scene {
   private killEnemy(enemy: Enemy): void {
     const { x, y } = enemy.getCenter();
     enemy.die();
+    playSfx(this, 'enemy_explode');
     this.enemiesKilled += 1;
     const points = this.score.award(enemy.points);
     floatingText(this, x, y - enemy.height, `+${points}`);
@@ -300,6 +327,7 @@ export class GameScene extends Phaser.Scene {
     if (thing instanceof Enemy) return this.killEnemy(thing);
     const { x, y } = thing.getCenter();
     explode(this, x, y);
+    playSfx(this, 'enemy_explode');
     thing.kill();
   }
 
@@ -340,11 +368,11 @@ export class GameScene extends Phaser.Scene {
     if (this.protect() === 'dead') this.die();
   }
 
-  /** Lets the powerups take a hit. The shield breaking is an effect ending: its sound plays. */
+  /** Lets the powerups take a hit; the shield breaks with a glass sound. */
   private protect(): HitOutcome {
     const outcome = this.powerUps.hit();
     if (outcome === 'shielded') {
-      playSfx(this, 'powerup_end');
+      playSfx(this, 'shield_break');
       this.cameras.main.shake(SHAKE.light.ms, SHAKE.light.intensity);
     }
     return outcome;
@@ -354,11 +382,39 @@ export class GameScene extends Phaser.Scene {
   private die(): void {
     this.dying = true;
     this.effects.clear();
+    playSfx(this, 'death');
+    this.dismissTutorialStep?.();
     this.player.die();
     this.cameras.main.shake(SHAKE.heavy.ms, SHAKE.heavy.intensity);
     this.timeScale = TIMING.deathSlowMoScale;
     this.physics.world.timeScale = 1 / TIMING.deathSlowMoScale; // Arcade: larger = slower
     this.time.delayedCall(TIMING.deathSlowMo, () => this.endRun());
+  }
+
+  /** Jump, double jump, landing and crouch / fast fall (spec §13.1). */
+  private playMotorSounds(): void {
+    const { jumped, landed, ducked } = this.player.motor.events;
+    if (jumped) playSfx(this, jumped === 'air' ? 'double_jump' : 'jump');
+    else if (landed) playSfx(this, 'land');
+    if (ducked) playSfx(this, 'crouch');
+  }
+
+  /** The tutorial step being asked for was done: the next one, or the end (saved, never shown again). */
+  private updateTutorial(): void {
+    const tutorial = this.tutorial;
+    const step = tutorial?.step;
+    if (!tutorial || !step || !this.inputSystem.justPressed(step)) return;
+    tutorial.perform(step);
+    this.dismissTutorialStep?.();
+    this.dismissTutorialStep = null;
+    if (tutorial.done) saveSystem.update((data) => void (data.tutorialDone = true));
+    else this.showTutorialStep();
+  }
+
+  private showTutorialStep(): void {
+    const step = this.tutorial?.step;
+    if (!step) return;
+    this.dismissTutorialStep = this.announcer.prompt(TUTORIAL_TEXT[step], tutorialHint(step, this.inputSystem.lastDevice));
   }
 
   private refreshScore(): void {
@@ -407,6 +463,16 @@ export class GameScene extends Phaser.Scene {
     const data: GameOverData = { ...run, coins: this.coinCount, previousBest: this.previousBest, newRecord };
     fadeToScene(this, SceneKey.GameOver, data);
   }
+}
+
+/** Tutorial notices (DISENO §13). */
+const TUTORIAL_TEXT: Record<TutorialStep, string> = { jump: '¡SALTA!', crouch: '¡AGÁCHATE!', shoot: '¡DISPARA!' };
+
+/** How to do a tutorial step with the device in use. */
+function tutorialHint(step: TutorialStep, device: InputDevice): string {
+  if (device === 'touch') return { jump: 'TOCA LA MITAD IZQUIERDA', crouch: 'BOTÓN ↓ O DESLIZA ABAJO', shoot: 'BOTÓN DE DISPARO' }[step];
+  if (device === 'gamepad') return { jump: 'BOTÓN A', crouch: '↓', shoot: 'BOTÓN B' }[step];
+  return { jump: 'ESPACIO O ↑', crouch: 'S O ↓', shoot: 'J, K O CLIC' }[step];
 }
 
 const SPARK_ANIM = 'fx_spark_burst';

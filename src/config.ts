@@ -161,6 +161,30 @@ export const AUDIO = {
     ui_type: 0.4,
     powerup_pickup: 0.5,
     powerup_end: 0.45,
+    jump: 0.4,
+    double_jump: 0.4,
+    land: 0.35,
+    crouch: 0.35,
+    shoot_0: 0.3,
+    shoot_1: 0.35,
+    shoot_2: 0.3,
+    enemy_hit: 0.4,
+    enemy_explode: 0.5,
+    turret_shot: 0.4,
+    coin: 0.35,
+    shield_break: 0.5,
+    zone_change: 0.45,
+    death: 0.55,
+  },
+  /** How sound effects play (spec §13.1). */
+  sfxRules: {
+    /** One instance of each sound at a time (a replay restarts it), except these. */
+    maxInstances: { coin: 3 },
+    /** Random pitch variation (±5 %) on these: jump, shots and impacts. */
+    pitchJitter: 0.05,
+    jittered: ['jump', 'double_jump', 'shoot_0', 'shoot_1', 'shoot_2', 'enemy_hit', 'enemy_explode'],
+    /** Coins picked up in a row: each one sounds this much higher, up to `max`, while they come within `windowMs`. */
+    coinStreak: { step: 0.05, max: 1.5, windowMs: 700 },
   },
 } as const;
 

@@ -22,6 +22,15 @@ export interface MotorInput {
 
 export type MotorPose = 'run' | 'jump' | 'fall' | 'crouch';
 
+/** What happened during the last `step`, for sounds and dust (spec §13.1, §13.2). */
+export interface MotorEvents {
+  /** A jump started: from the ground (or coyote time) or in the air (double jump). */
+  jumped: 'ground' | 'air' | null;
+  landed: boolean;
+  /** Started crouching on the ground, or a fast fall in the air. */
+  ducked: boolean;
+}
+
 /**
  * Vertical movement of the player (spec §9), with no Phaser dependency so it can be tested.
  * y grows downwards, like the screen. `groundY` is the surface under the player, or null over
@@ -39,6 +48,8 @@ export class PlayerMotor {
   private bufferLeft = 0;
   /** True while rising from a jump whose button has not been released yet. */
   private canCut = false;
+  /** Events of the last step. */
+  readonly events: MotorEvents = { jumped: null, landed: false, ducked: false };
 
   constructor(
     feetY: number,
@@ -57,6 +68,10 @@ export class PlayerMotor {
   step(deltaMs: number, input: MotorInput, groundY: number | null): void {
     const { config } = this;
     const dt = deltaMs / 1000;
+    const wasCrouching = this.crouching;
+    this.events.jumped = null;
+    this.events.landed = false;
+    this.events.ducked = false;
 
     if (input.jumpPressed) this.bufferLeft = config.jumpBufferMs;
     this.tryJump();
@@ -79,6 +94,7 @@ export class PlayerMotor {
       if (input.crouchPressed) {
         this.vy = Math.max(this.vy, config.fastFallSpeed);
         this.canCut = false;
+        this.events.ducked = true;
       }
       this.vy = Math.min(this.vy + config.gravity * dt, config.maxFallSpeed);
       const before = this.feetY;
@@ -88,6 +104,7 @@ export class PlayerMotor {
     }
 
     this.crouching = this.grounded && input.crouchHeld;
+    if (this.crouching && !wasCrouching && !this.events.landed) this.events.ducked = true;
 
     this.bufferLeft = Math.max(0, this.bufferLeft - deltaMs);
     if (this.coyoteLeft > 0) {
@@ -115,6 +132,7 @@ export class PlayerMotor {
     this.feetY = groundY;
     this.vy = 0;
     this.grounded = true;
+    this.events.landed = true;
     this.jumpsUsed = 0;
     this.coyoteLeft = 0;
     // A jump pressed just before landing happens now (jump buffer).
@@ -127,6 +145,7 @@ export class PlayerMotor {
     const fromGround = this.grounded || this.coyoteLeft > 0;
     if (!fromGround && this.jumpsUsed >= this.maxJumps) return;
     this.jumpsUsed = fromGround ? 1 : this.jumpsUsed + 1;
+    this.events.jumped = fromGround ? 'ground' : 'air';
     this.vy = this.config.jumpVelocity;
     this.grounded = false;
     this.crouching = false;

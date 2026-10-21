@@ -1,18 +1,24 @@
 import Phaser from 'phaser';
 import { AUDIO } from '../config';
 import { saveSystem } from './SaveSystem';
+import { jitterRate, maxInstances, type SfxKey } from './sfx';
 import { musicGain } from './volume';
 
-export type SfxKey = keyof typeof AUDIO.sfx;
+export type { SfxKey } from './sfx';
 
 /**
- * Plays a sound effect if the "sfx" setting is on. Each key keeps a single instance that
- * restarts on replay, so repeated clicks never stack (spec §13.1).
+ * Plays a sound effect if the "sfx" setting is on (spec §13.1). Each key keeps a single
+ * instance that restarts on replay, so repeated sounds never stack; coins keep up to 3.
+ * Jumps, shots and impacts get a random ±5 % pitch. `rate` sets the pitch instead (coin streak).
  */
-export function playSfx(scene: Phaser.Scene, key: SfxKey): void {
+export function playSfx(scene: Phaser.Scene, key: SfxKey, rate?: number): void {
   if (!saveSystem.data.settings.sfx || !scene.cache.audio.exists(key)) return;
-  const sound = scene.sound.get(key) ?? scene.sound.add(key, { volume: AUDIO.sfx[key] });
-  sound.play();
+  const sounds = scene.sound.getAll(key);
+  // Reuse an idle copy, or add one while under the limit, or restart the oldest.
+  let sound = sounds.find((s) => !s.isPlaying);
+  if (!sound && sounds.length < maxInstances(key)) sound = scene.sound.add(key, { volume: AUDIO.sfx[key] });
+  sound ??= sounds[0]!;
+  sound.play({ volume: AUDIO.sfx[key], rate: rate ?? jitterRate(key, Math.random()) });
 }
 
 interface Voice {
