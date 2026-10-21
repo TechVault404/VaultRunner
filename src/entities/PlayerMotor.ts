@@ -32,7 +32,7 @@ export class PlayerMotor {
   vy = 0;
   grounded = true;
   crouching = false;
-  /** Can be raised by the double-jump powerup (Phase 5). */
+  /** Raised by the double-jump powerup (spec §12). */
   maxJumps: number;
   private jumpsUsed = 0;
   private coyoteLeft = 0;
@@ -95,6 +95,20 @@ export class PlayerMotor {
       // Coyote time over without jumping: the ground jump is gone.
       if (this.coyoteLeft === 0 && !this.grounded && this.jumpsUsed === 0) this.jumpsUsed = 1;
     }
+  }
+
+  /**
+   * Saved from a fall (shield or invulnerability over a hole, spec §12): a full jump straight
+   * up from wherever the feet are. It is not a jump of the player's: it can't be cut short, and
+   * the air jumps left (double jump) stay as they were.
+   */
+  bounce(): void {
+    this.vy = this.config.jumpVelocity;
+    this.grounded = false;
+    this.crouching = false;
+    this.canCut = false;
+    this.coyoteLeft = 0;
+    this.jumpsUsed = Math.max(this.jumpsUsed, 1);
   }
 
   private land(groundY: number): void {

@@ -1,6 +1,7 @@
-import { PLAYER, SPAWN, WORLD } from '../config';
+import { PLAYER, POWERUPS, SPAWN, WORLD, type PowerUpKind } from '../config';
 import { SCREEN } from '../theme';
 import { patternMinM, PATTERNS, type Lane, type Pattern, type PatternStep, type ThreatKind, type Tier } from './patterns';
+import { pickPowerUp, type PowerUpConfig } from './PowerUpSystem';
 import type { Rng } from './Rng';
 
 export type SpawnConfig = typeof SPAWN;
@@ -25,6 +26,19 @@ export interface PlannedThreat {
 export interface PlannedCoin {
   x: number;
   y: number;
+}
+
+/** A powerup pickup. `x` = left edge in world px. */
+export interface PlannedPowerUp {
+  kind: PowerUpKind;
+  x: number;
+}
+
+/** What one call to `planUntil` adds to the world. */
+export interface PlannedWorld {
+  threats: PlannedThreat[];
+  coins: PlannedCoin[];
+  powerUps: PlannedPowerUp[];
 }
 
 export interface SpeedCurve {
@@ -65,6 +79,8 @@ export class SpawnPlanner {
   private cursor: number;
   private lastPattern = '';
   private readonly patterns: readonly Pattern[];
+  /** World px from which the next powerup is due. */
+  private nextPowerUpX: number;
 
   /** `startX` = world px where the run starts (startM × pxPerMeter). */
   constructor(
@@ -73,11 +89,14 @@ export class SpawnPlanner {
     startX: number,
     private readonly config: SpawnConfig = SPAWN,
     patterns: readonly Pattern[] = PATTERNS,
+    private readonly powerUpConfig: PowerUpConfig = POWERUPS,
   ) {
     this.patterns = patterns;
     // Nothing enters the screen before `safeM`, nor before the screen's right edge at the start.
     const firstEnter = Math.max(config.safeM * WORLD.pxPerMeter, startX) + SCREEN.w + config.spawnMarginPx;
     this.cursor = firstEnter - fairGap(curve.speedAt(firstEnter / WORLD.pxPerMeter), config);
+    // The first powerup comes 250–400 m into the run (spec §12), like every next one.
+    this.nextPowerUpX = startX + PLAYER.x + this.powerUpSpacing();
   }
 
   /** World px up to which the world has been planned. */
@@ -85,12 +104,14 @@ export class SpawnPlanner {
     return this.cursor;
   }
 
-  /** Plans patterns until the world is covered up to `worldX`. */
-  planUntil(worldX: number): { threats: PlannedThreat[]; coins: PlannedCoin[] } {
-    const threats: PlannedThreat[] = [];
-    const coins: PlannedCoin[] = [];
-    while (this.cursor < worldX) this.placePattern(threats, coins);
-    return { threats, coins };
+  /** Plans patterns (and powerups when due) until the world is covered up to `worldX`. */
+  planUntil(worldX: number): PlannedWorld {
+    const world: PlannedWorld = { threats: [], coins: [], powerUps: [] };
+    while (this.cursor < worldX) {
+      if (this.cursor >= this.nextPowerUpX) this.placePowerUp(world.powerUps);
+      else this.placePattern(world.threats, world.coins);
+    }
+    return world;
   }
 
   /** Distance (m) at which something at world x enters the screen. */
@@ -157,8 +178,34 @@ export class SpawnPlanner {
     this.cursor = x + stepW;
   }
 
+  /**
+   * A powerup in a slot of its own between two patterns (spec §12: never inside an obstacle):
+   * the fairness gap plus some clearance on both sides, so jumping for it is always safe.
+   */
+  private placePowerUp(powerUps: PlannedPowerUp[]): void {
+    const { size } = this.powerUpConfig.pickup;
+    const clearance = this.powerUpConfig.clearancePx;
+    const x = this.cursor + fairGap(this.speedAtX(this.cursor), this.config) + clearance;
+    const kind = pickPowerUp(this.metersAtX(x), this.rng.next(), this.powerUpConfig);
+    powerUps.push({ kind, x });
+    // The next pattern keeps the clearance too (its own fairness gap starts from here).
+    this.cursor = x + size + clearance;
+    this.nextPowerUpX = x + this.powerUpSpacing();
+  }
+
+  /** Random room until the next powerup (px). */
+  private powerUpSpacing(): number {
+    const { min, max } = this.powerUpConfig.everyM;
+    return this.rng.float(min, max) * WORLD.pxPerMeter;
+  }
+
+  /** Distance run (m) when the player reaches world x. */
+  private metersAtX(x: number): number {
+    return Math.max(0, (x - PLAYER.x) / WORLD.pxPerMeter);
+  }
+
   private speedAtX(x: number): number {
-    return this.curve.speedAt(Math.max(0, (x - PLAYER.x) / WORLD.pxPerMeter));
+    return this.curve.speedAt(this.metersAtX(x));
   }
 
   /** A row of coins on the ground lane, centered in the gap [from, to]. */

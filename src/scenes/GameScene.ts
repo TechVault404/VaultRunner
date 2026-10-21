@@ -1,12 +1,16 @@
 import Phaser from 'phaser';
 import { AUDIO, PLAYER, SCORE, WORLD } from '../config';
 import type { Coin } from '../entities/Coin';
-import type { Enemy } from '../entities/Enemy';
+import { explode } from '../entities/effects';
+import { Enemy } from '../entities/Enemy';
 import type { Obstacle } from '../entities/Obstacle';
 import { Player } from '../entities/Player';
+import { PlayerEffects } from '../entities/PlayerEffects';
+import type { PowerUp } from '../entities/PowerUp';
 import type { Projectile } from '../entities/Projectile';
+import type { WorldSprite } from '../entities/WorldSprite';
 import { ZoneScenery } from '../entities/ZoneScenery';
-import { music } from '../systems/AudioSystem';
+import { music, playSfx } from '../systems/AudioSystem';
 import { BiomeSystem, type ZoneState } from '../systems/BiomeSystem';
 import { CoinSystem } from '../systems/CoinSystem';
 import { DifficultySystem } from '../systems/DifficultySystem';
@@ -14,6 +18,7 @@ import { GroundSystem } from '../systems/GroundSystem';
 import { hasFloor } from '../systems/holes';
 import { InputSystem } from '../systems/InputSystem';
 import { PORTRAIT_EVENT } from '../systems/OrientationGuard';
+import { PowerUpSystem, type HitOutcome } from '../systems/PowerUpSystem';
 import { Rng } from '../systems/Rng';
 import { parseRunParams, type RunParams } from '../systems/RunParams';
 import { saveSystem } from '../systems/SaveSystem';
@@ -40,7 +45,8 @@ export interface GameOverData {
 /**
  * Main gameplay scene; orchestrates the systems. The world speeds up with the distance,
  * zones, music and scenery change along the way, obstacles and enemies come in patterns,
- * and the first hit ends the run (spec §11.4) and keeps the personal record.
+ * powerups float in between (spec §12), and the first hit without a shield ends the run
+ * (spec §11.4) and keeps the personal record.
  */
 export class GameScene extends Phaser.Scene {
   private inputSystem!: InputSystem;
@@ -54,6 +60,8 @@ export class GameScene extends Phaser.Scene {
   private coins!: CoinSystem;
   private ground!: GroundSystem;
   private spawner!: SpawnSystem;
+  private powerUps!: PowerUpSystem;
+  private effects!: PlayerEffects;
   private hud!: Hud;
   private announcer!: Announcer;
   /** Meters run in this run. */
@@ -103,6 +111,8 @@ export class GameScene extends Phaser.Scene {
     const startX = this.distance * WORLD.pxPerMeter;
     this.scenery.scroll(startX);
     this.player = new Player(this, character, SCREEN.groundY);
+    this.powerUps = new PowerUpSystem();
+    this.effects = new PlayerEffects(this, this.player);
     this.shooting = new ShootingSystem(this, character.weapon);
     this.coins = new CoinSystem(this);
     this.ground = new GroundSystem(this, this.scenery);
@@ -117,7 +127,12 @@ export class GameScene extends Phaser.Scene {
     );
 
     this.physics.add.overlap(this.player.sprite, this.coins.group, (_player, coin) => this.collect(coin as Coin));
-    this.physics.add.overlap(this.player.sprite, this.spawner.dangerPools, () => this.hitPlayer());
+    this.physics.add.overlap(this.player.sprite, this.spawner.dangerPools, (_player, thing) =>
+      this.touch(thing as WorldSprite),
+    );
+    this.physics.add.overlap(this.player.sprite, this.spawner.powerUps, (_player, powerUp) =>
+      this.pickUp(powerUp as PowerUp),
+    );
     this.physics.add.overlap(this.shooting.group, this.spawner.enemyPools, (shot, enemy) =>
       this.shotHits(shot as Projectile, enemy as Enemy),
     );
@@ -155,26 +170,41 @@ export class GameScene extends Phaser.Scene {
     }
     const delta = rawDelta * this.timeScale;
 
+    // Powerup timers run on the scene's own delta: pause and hit-stop don't count (spec §12).
+    if (!this.dying) {
+      if (this.powerUps.update(delta).length > 0) playSfx(this, 'powerup_end');
+      this.applyPowerUps();
+    }
+
     this.player.update(delta, input, this.floorUnderPlayer());
     const { motor } = this.player;
-    if (!motor.grounded && motor.feetY > SCREEN.groundY + PLAYER.holeDeathDepth) this.hitPlayer();
+    if (!motor.grounded && motor.feetY > SCREEN.groundY + PLAYER.holeDeathDepth) this.fallInHole();
 
     if (!this.dying) {
-      this.shooting.update(delta);
+      this.shooting.update(delta, this.powerUps.fire);
       // Holding the button keeps firing at the cooldown rate; a tap shorter than a frame still fires.
       if (input.isDown('shoot') || input.justPressed('shoot')) {
         const { x, y } = this.player.muzzlePoint;
-        if (this.shooting.tryFire(x, y)) this.player.onShot();
+        if (this.shooting.tryFire(x, y, this.powerUps.shotAngles)) this.player.onShot();
       }
+      this.effects.update(delta, this.powerUps);
+      this.hud.setPowerUps(this.powerUps.active);
     }
 
     this.advanceWorld(delta);
     if (!this.dying) this.checkCloseDodges();
   }
 
+  /** Effects that change other systems: jumps, points multiplier (the rest is read where used). */
+  private applyPowerUps(): void {
+    this.player.motor.maxJumps = this.powerUps.maxJumps;
+    this.score.multiplier = this.powerUps.scoreMultiplier;
+  }
+
   /** Moves the world at the current speed and reacts to distance: score, zones, music, spawns. */
   private advanceWorld(deltaMs: number): void {
-    const speed = this.difficulty.speedAt(this.distance);
+    // Turbo: ×1.8 while it lasts (spec §12); the distance and its points grow as fast.
+    const speed = this.difficulty.speedAt(this.distance) * (this.dying ? 1 : this.powerUps.speedMultiplier);
     const dx = (speed * deltaMs) / 1000;
     this.scenery.scroll(dx);
     // A hit freezes the run's distance and score; the world only coasts in slow motion.
@@ -185,6 +215,9 @@ export class GameScene extends Phaser.Scene {
     }
     this.spawner.update({ deltaMs, scrolled: this.scenery.scrolled, speed, player: { bounds: this.player.bounds } });
     if (this.dying) return;
+    const { centerX, centerY } = this.player.bounds;
+    const magnet = this.powerUps.isActive('magnet');
+    this.coins.attract({ x: centerX, y: centerY }, this.scenery.scrolled, speed, deltaMs, magnet);
 
     const zone = this.biomes.update(this.distance);
     if (zone) {
@@ -200,9 +233,9 @@ export class GameScene extends Phaser.Scene {
     this.hud.setDistance(Math.floor(this.distance));
   }
 
-  /** Ground y under the player, or null over a hole. */
+  /** Ground y under the player, or null over a hole. Invulnerable (turbo and the second after), holes have a floor. */
   private floorUnderPlayer(): number | null {
-    if (this.params.god) return SCREEN.groundY;
+    if (this.params.god || this.powerUps.invulnerable) return SCREEN.groundY;
     const { left, right } = this.player.bounds;
     const holes = this.ground.spans(this.scenery.scrolled);
     return hasFloor(left, right, holes, this.player.motor.grounded) ? SCREEN.groundY : null;
@@ -215,26 +248,59 @@ export class GameScene extends Phaser.Scene {
     this.coinCount += 1;
     const points = this.score.award('coin');
     floatingText(this, x, y - coin.height, `+${points}`);
+    this.sparkAt(x, y);
+    this.refreshScore();
+  }
+
+  private sparkAt(x: number, y: number): void {
     const spark = this.add.sprite(x, y, 'fx_spark').setDepth(DEPTH.fx);
     spark.play(sparkAnim(this));
     spark.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => spark.destroy());
-    this.refreshScore();
+  }
+
+  /** Picks up a powerup (spec §12): starts its effect, or starts its time over. */
+  private pickUp(powerUp: PowerUp): void {
+    if (!powerUp.active || this.dying) return;
+    const { x, y } = powerUp.getCenter();
+    powerUp.kill();
+    this.powerUps.activate(powerUp.kind);
+    this.applyPowerUps();
+    playSfx(this, 'powerup_pickup');
+    this.sparkAt(x, y);
   }
 
   private shotHits(shot: Projectile, enemy: Enemy): void {
     if (!shot.active || !enemy.active || this.dying) return;
     shot.kill();
     if (!enemy.hit()) return;
+    this.killEnemy(enemy);
+    // Kill feedback (DISENO §10): a 40 ms hit-stop on top of the light shake.
+    this.freezeMs = TIMING.hitStop;
+    this.physics.world.pause();
+  }
+
+  /** An enemy dies: explosion, its points (×2 if active) and the kill counter. */
+  private killEnemy(enemy: Enemy): void {
     const { x, y } = enemy.getCenter();
     enemy.die();
     this.enemiesKilled += 1;
     const points = this.score.award(enemy.points);
     floatingText(this, x, y - enemy.height, `+${points}`);
-    // Kill feedback (DISENO §10): light shake and a 40 ms hit-stop.
     this.cameras.main.shake(SHAKE.light.ms, SHAKE.light.intensity);
-    this.freezeMs = TIMING.hitStop;
-    this.physics.world.pause();
     this.refreshScore();
+  }
+
+  /**
+   * The player touched an obstacle, an enemy or a bullet. With the turbo it blows up instead
+   * (spec §12): enemies give their points and count; obstacles and bullets give nothing.
+   */
+  private touch(thing: WorldSprite): void {
+    if (!thing.active || this.dying) return;
+    if (!this.powerUps.isActive('turbo')) return this.hitPlayer();
+    if (thing instanceof Enemy) return this.killEnemy(thing);
+    const { x, y } = thing.getCenter();
+    explode(this, x, y);
+    thing.kill();
   }
 
   /** Close dodge (spec §10.3): an obstacle passed within a few px of the player gives points. */
@@ -258,11 +324,36 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Touching an enemy, its bullet or an obstacle, or falling in a hole (spec §11.4). */
+  /**
+   * Fell in a hole (spec §11.4). The shield, or being invulnerable, saves it too: the player
+   * bounces back out with a full jump (decision in spec §18).
+   */
+  private fallInHole(): void {
+    if (this.dying || this.ended || this.params.god) return;
+    if (this.protect() === 'dead') return this.die();
+    this.player.motor.bounce();
+  }
+
+  /** Touching an enemy, its bullet or an obstacle (spec §11.4); the shield absorbs one hit (spec §12). */
   private hitPlayer(): void {
     if (this.dying || this.ended || this.params.god) return;
-    // Phase 5: the shield absorbs the hit here.
+    if (this.protect() === 'dead') this.die();
+  }
+
+  /** Lets the powerups take a hit. The shield breaking is an effect ending: its sound plays. */
+  private protect(): HitOutcome {
+    const outcome = this.powerUps.hit();
+    if (outcome === 'shielded') {
+      playSfx(this, 'powerup_end');
+      this.cameras.main.shake(SHAKE.light.ms, SHAKE.light.intensity);
+    }
+    return outcome;
+  }
+
+  /** No protection left: the death sequence (spec §11.4). */
+  private die(): void {
     this.dying = true;
+    this.effects.clear();
     this.player.die();
     this.cameras.main.shake(SHAKE.heavy.ms, SHAKE.heavy.intensity);
     this.timeScale = TIMING.deathSlowMoScale;

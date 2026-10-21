@@ -215,7 +215,7 @@ Transición entre escenas: fade a negro de `TIMING.sceneFade` (200 ms).
 - Personaje = `Container` con hasta 5 sprites (cuerpo, ropa, cabello, accesorio, arma) que reproducen **la misma clave de frame** en cada actualización. Nunca animes las capas por separado.
 - Enemigos miran a la **izquierda**; el jugador a la **derecha**. No uses `flipX` en ninguno.
 
-**Capas de dibujo** (`DEPTH`): fondo lejano 0 → medio 1 → cercano 2 → suelo 10 → obstáculos 20 → pickups 25 → enemigos 30 → balas enemigas 35 → jugador 40 → efectos del jugador 41 → proyectiles 45 → efectos 50 → textos flotantes 60 → HUD 100 → botones táctiles 110 → overlays 200 → transiciones 300.
+**Capas de dibujo** (`DEPTH`): fondo lejano 0 → medio 1 → cercano 2 → suelo 10 → obstáculos 20 → pickups 25 → enemigos 30 → balas enemigas 35 → efectos detrás del jugador 39 (aura, estela) → jugador 40 → efectos del jugador 41 → proyectiles 45 → efectos 50 → textos flotantes 60 → HUD 100 → botones táctiles 110 → overlays 200 → transiciones 300.
 
 **Animaciones**
 - Claves: `<asset>_<acción>` → `player_run`, `enemy_drone_fly`, `zona3_saw_spin`.

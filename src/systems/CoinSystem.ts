@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SCORE } from '../config';
+import { POWERUPS, SCORE } from '../config';
 import { Coin } from '../entities/Coin';
 
 /**
@@ -28,5 +28,22 @@ export class CoinSystem {
 
   update(scrolled: number): void {
     for (const coin of this.group.getChildren() as Coin[]) if (coin.active) coin.sync(scrolled);
+  }
+
+  /**
+   * Magnet (spec §12): coins within `POWERUPS.magnet.radius` of the player's center (screen px)
+   * fly to it, faster than the world moves so they catch up from behind too. Once caught, a
+   * coin keeps flying until it is picked up, even if the magnet runs out (`catchNew` = false).
+   */
+  attract(target: { x: number; y: number }, scrolled: number, speed: number, deltaMs: number, catchNew: boolean): void {
+    const { radius, pullSpeed } = POWERUPS.magnet;
+    const step = ((speed + pullSpeed) * deltaMs) / 1000;
+    for (const coin of this.group.getChildren() as Coin[]) {
+      if (!coin.active) continue;
+      if (!coin.magnetized && (!catchNew || Math.hypot(coin.x - target.x, coin.y - target.y) > radius)) continue;
+      coin.magnetized = true;
+      coin.pull(target.x + Math.round(scrolled), target.y, step);
+      coin.sync(scrolled);
+    }
   }
 }

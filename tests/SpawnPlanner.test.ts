@@ -1,17 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { PLAYER, SPAWN, WORLD } from '../src/config';
+import { PLAYER, POWERUPS, SPAWN, WORLD } from '../src/config';
 import { DifficultySystem } from '../src/systems/DifficultySystem';
 import { PATTERNS, validatePattern } from '../src/systems/patterns';
 import { Rng } from '../src/systems/Rng';
-import { fairGap, movingGap, SpawnPlanner, type PlannedThreat } from '../src/systems/SpawnPlanner';
+import { fairGap, movingGap, SpawnPlanner, type PlannedThreat, type PlannedWorld } from '../src/systems/SpawnPlanner';
 import { SCREEN } from '../src/theme';
 
 const curve = new DifficultySystem();
 const LAP_PX = 6000 * WORLD.pxPerMeter;
 
+function planWorld(seed: number, startM = 0, untilPx = LAP_PX): PlannedWorld {
+  return new SpawnPlanner(new Rng(seed), curve, startM * WORLD.pxPerMeter).planUntil(untilPx);
+}
+
 function plan(seed: number, startM = 0, untilPx = LAP_PX): PlannedThreat[] {
-  const planner = new SpawnPlanner(new Rng(seed), curve, startM * WORLD.pxPerMeter);
-  return planner.planUntil(untilPx).threats;
+  return planWorld(seed, startM, untilPx).threats;
 }
 
 /** Threats grouped by step (same pattern step = overlapping x). */
@@ -113,5 +116,50 @@ describe('SpawnPlanner', () => {
   it('starts past the screen when a run starts further on', () => {
     const first = plan(3, 2250)[0]!;
     expect(first.x).toBeGreaterThan(2250 * WORLD.pxPerMeter + SCREEN.w);
+  });
+});
+
+describe('SpawnPlanner powerups', () => {
+  it('places one every 250–400 m', () => {
+    for (const seed of [1, 2, 3]) {
+      const meters = planWorld(seed).powerUps.map((p) => metM(p.x));
+      expect(meters.length).toBeGreaterThan(10);
+      expect(meters[0]).toBeGreaterThanOrEqual(POWERUPS.everyM.min);
+      for (let i = 1; i < meters.length; i++) {
+        const gap = meters[i]! - meters[i - 1]!;
+        expect(gap).toBeGreaterThanOrEqual(POWERUPS.everyM.min);
+        // A powerup waits for the pattern in progress to end: allow one pattern of slack.
+        expect(gap).toBeLessThanOrEqual(POWERUPS.everyM.max + 150);
+      }
+    }
+  });
+
+  it('never puts one inside or next to a threat (fairness gap + clearance on both sides)', () => {
+    for (const seed of [4, 5, 6]) {
+      const { threats, powerUps } = planWorld(seed, 0, 12000 * WORLD.pxPerMeter);
+      for (const p of powerUps) {
+        const left = p.x;
+        const right = p.x + POWERUPS.pickup.size;
+        for (const t of threats) {
+          if (t.x >= right) {
+            // The next pattern: clearance plus its own fairness gap.
+            expect(t.x - right).toBeGreaterThanOrEqual(POWERUPS.clearancePx + fairGap(curve.speedAt(metM(right))) - 0.001);
+          } else {
+            const before = t.x + t.w;
+            expect(left - before).toBeGreaterThanOrEqual(fairGap(curve.speedAt(metM(before))) + POWERUPS.clearancePx - 0.001);
+          }
+        }
+      }
+    }
+  });
+
+  it('gives every kind, and the turbo only from 800 m', () => {
+    const powerUps = [7, 8, 9].flatMap((seed) => planWorld(seed, 0, 12000 * WORLD.pxPerMeter).powerUps);
+    expect(new Set(powerUps.map((p) => p.kind)).size).toBe(6);
+    for (const p of powerUps.filter((q) => q.kind === 'turbo')) expect(metM(p.x)).toBeGreaterThanOrEqual(800);
+  });
+
+  it('repeats the same powerups for the same seed', () => {
+    expect(planWorld(42).powerUps).toEqual(planWorld(42).powerUps);
   });
 });

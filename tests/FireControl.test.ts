@@ -36,4 +36,18 @@ describe('FireControl', () => {
     fire.update(200);
     expect(fire.tryFire(8)).toBe(true);
   });
+
+  it('switches limits on the fly (triple shot on and off)', () => {
+    const fire = new FireControl();
+    fire.setConfig({ cooldownMs: 200, maxOnScreen: 9 });
+    expect(fire.tryFire(3)).toBe(true);
+    fire.update(200);
+    expect(fire.tryFire(6)).toBe(true);
+    fire.setConfig(SHOOTING);
+    fire.update(200);
+    expect(fire.tryFire(0)).toBe(false); // back to the normal 350 ms cooldown
+    fire.update(150);
+    expect(fire.tryFire(3)).toBe(false); // and the normal limit of 3
+    expect(fire.tryFire(2)).toBe(true);
+  });
 });

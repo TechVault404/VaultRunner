@@ -96,8 +96,11 @@ export const HUD = {
   pause: { x: 299, y: 5, size: 16 },
   powerups: {
     right: 288, y: 4, step: 18,             // crecen hacia la izquierda desde x = 288
+    x: 269,                                 // caja del primero que se recogió; cada siguiente a −step (pantalla 04)
     box: { w: 16, h: 19, alpha: 0.55 },     // fondo negro
+    icon: { dx: 2, dy: 1 },                 // ícono de 12 px dentro de la caja
     bar: { dx: 2, dy: 15, w: 11, h: 2 },    // barra de tiempo dentro de la caja
+    multiplierDy: 22,                       // "×2" opcional bajo la caja de Puntos ×2
     lowFraction: 0.25,                      // barra en COLOR.danger por debajo de esto
     blinkLastMs: 2000, blinkHz: 4,
   },
@@ -109,7 +112,7 @@ export const HUD = {
 // ─── Capas de dibujo (setDepth) ──────────────────────────────────────────
 export const DEPTH = {
   bgFar: 0, bgMid: 1, bgNear: 2, ground: 10, obstacles: 20, pickups: 25,
-  enemies: 30, enemyBullets: 35, player: 40, playerFx: 41, projectiles: 45,
+  enemies: 30, enemyBullets: 35, playerFxBack: 39, player: 40, playerFx: 41, projectiles: 45,
   fx: 50, floatingText: 60, hud: 100, touch: 110, overlay: 200, transition: 300,
 } as const;
 
@@ -142,6 +145,13 @@ export const TIMING = {
   glitchGhostBlinkHz: 10,   // silueta del Glitch en el carril al que va a saltar
   powerupBob: { amplitude: 2, period: 1200 },
   menuIdleBob: { amplitude: 1, period: 800 },
+} as const;
+
+// Efectos de powerup sobre el personaje (DISENO §10): esquina superior izquierda respecto al frame de 16 × 24
+export const PLAYER_FX = {
+  shield: { dx: -4, dy: -2 },   // fx_shield 24 × 28, centrada en el jugador, encima
+  aura: { dx: -2, dy: -2 },     // fx_aura 20 × 28, centrada en el jugador, detrás (Turbo y ×2)
+  trail: { dx: -24, dy: 2 },    // fx_trail 24 × 20, detrás del jugador pegada a su borde izquierdo (Turbo)
 } as const;
 
 export const SHAKE = { light: { ms: 100, intensity: 0.004 }, heavy: { ms: 200, intensity: 0.012 } } as const;

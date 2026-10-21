@@ -27,12 +27,13 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     this.setOrigin(0, 0.5).setDepth(DEPTH.projectiles);
   }
 
-  /** `x` = left edge, `y` = center line of the shot. */
-  fire(x: number, y: number, anim: string): void {
+  /** `x` = left edge, `y` = center line of the shot; `angleDeg` < 0 flies up (triple shot fan). */
+  fire(x: number, y: number, anim: string, angleDeg = 0): void {
     this.enableBody(true, x, y, true, true);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setAllowGravity(false);
-    this.setVelocity(SHOOTING.speed, 0);
+    const angle = Phaser.Math.DegToRad(angleDeg);
+    this.setVelocity(SHOOTING.speed * Math.cos(angle), SHOOTING.speed * Math.sin(angle));
     this.play(anim);
   }
 
@@ -43,6 +44,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
   preUpdate(time: number, delta: number): void {
     super.preUpdate(time, delta);
-    if (this.active && this.x > SCREEN.w) this.kill();
+    // Off the right edge, off the top, or into the ground (a fan shot aimed down).
+    if (this.active && (this.x > SCREEN.w || this.y < 0 || this.y > SCREEN.groundY)) this.kill();
   }
 }
