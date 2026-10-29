@@ -106,6 +106,7 @@ export const HUD = {
   },
   banner: { y: 64, h: 29, lineColor: PALETTE.cyan, zoneY: 68, nameY: 78 }, // cartel de cambio de zona
   toast: { y: 30, h: 15, padX: 6, textDy: 4 },       // "¡RÉCORD SUPERADO!": caja = texto + padX por lado
+  tutorial: { h: 26, hintDy: 15 },                   // aviso del tutorial: título + línea de ayuda debajo
   recordBlink: { times: 3, hz: 4 },                  // récord superado: pasa a ámbar y parpadea
 } as const;
 
@@ -144,6 +145,7 @@ export const TIMING = {
   turretFireFrame: 150,     // cuánto se ve el frame "fire" al disparar
   glitchGhostBlinkHz: 10,   // silueta del Glitch en el carril al que va a saltar
   powerupBob: { amplitude: 2, period: 1200 },
+  dustRunEvery: 150,        // una nube de polvo cada tanto al correr por el suelo
   menuIdleBob: { amplitude: 1, period: 800 },
 } as const;
 
@@ -152,6 +154,8 @@ export const PLAYER_FX = {
   shield: { dx: -4, dy: -2 },   // fx_shield 24 × 28, centrada en el jugador, encima
   aura: { dx: -2, dy: -2 },     // fx_aura 20 × 28, centrada en el jugador, detrás (Turbo y ×2)
   trail: { dx: -24, dy: 2 },    // fx_trail 24 × 20, detrás del jugador pegada a su borde izquierdo (Turbo)
+  // fx_dust 8 × 8 en los pies, apoyado en el suelo; se queda en el mundo (DISENO §10)
+  dust: { runDx: 0, landDx: [-3, 11], pool: 8 },
 } as const;
 
 export const SHAKE = { light: { ms: 100, intensity: 0.004 }, heavy: { ms: 200, intensity: 0.012 } } as const;

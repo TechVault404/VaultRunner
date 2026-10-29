@@ -183,4 +183,36 @@ describe('PlayerMotor', () => {
     expect(motor.vy).toBeLessThan(vyBefore);
     expect(motor.vy).toBe(PLAYER.jumpVelocity + (PLAYER.gravity * FRAME) / 1000);
   });
+
+  it('reports jumps, air jumps, landings and ducks for the sounds and dust', () => {
+    const motor = new PlayerMotor(GROUND);
+    motor.maxJumps = 2;
+    run(motor, 1, { jumpPressed: true, jumpHeld: true });
+    expect(motor.events.jumped).toBe('ground');
+    run(motor, 1, { jumpHeld: true });
+    expect(motor.events.jumped).toBeNull();
+    run(motor, 10);
+    run(motor, 1, { jumpPressed: true, jumpHeld: true });
+    expect(motor.events.jumped).toBe('air');
+    run(motor, 1, { crouchPressed: true, crouchHeld: true });
+    expect(motor.events.ducked).toBe(true); // fast fall
+    let landed = 0;
+    for (let i = 0; i < 120; i++) {
+      run(motor, 1);
+      if (motor.events.landed) landed += 1;
+    }
+    expect(landed).toBe(1);
+    run(motor, 1, { crouchPressed: true, crouchHeld: true });
+    expect(motor.events.ducked).toBe(true); // crouch on the ground
+    run(motor, 1, { crouchHeld: true });
+    expect(motor.events.ducked).toBe(false); // only when it starts
+  });
+
+  it('a bounce out of a hole is not a jump of the player (no jump sound)', () => {
+    const motor = new PlayerMotor(GROUND);
+    while (motor.feetY <= GROUND + PLAYER.holeDeathDepth) run(motor, 1, {}, null);
+    motor.bounce();
+    run(motor, 1);
+    expect(motor.events.jumped).toBeNull();
+  });
 });

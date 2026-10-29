@@ -50,16 +50,12 @@ En Phaser, un `Container` con 5 sprites que reproducen la misma animación (mism
 
 - **Sonidos de interfaz** `audio/sfx/ui_*.wav` (generados con `tools/audio/ui_sfx.py`, local): `ui_move` (mover el foco), `ui_change` (cambiar opción o color), `ui_confirm` (botón), `ui_back` (cancelar), `ui_random` (dado), `ui_reset` (restablecer), `ui_type` (escribir el nombre). Están registrados en `manifest.audio`; el volumen de cada uno está en `AUDIO.sfx` (`config.ts`).
 
-- **Sonidos de powerup** `audio/sfx/powerup_pickup.wav` (arpegio ascendente al recoger) y `powerup_end.wav` (arpegio descendente corto al terminar el efecto), generados con `tools/audio/game_sfx.py` (local; reutiliza las funciones de `ui_sfx.py`). Volúmenes en `AUDIO.sfx`.
+- **Efectos de juego** `audio/sfx/*.wav` (spec §13.1), generados con `tools/audio/game_sfx.py` (local; reutiliza las funciones de `ui_sfx.py`): `jump`, `double_jump`, `land`, `crouch` (agacharse o caída rápida), `shoot_0`–`shoot_2` (uno por arma), `enemy_hit`, `enemy_explode`, `turret_shot`, `coin`, `powerup_pickup`, `powerup_end`, `shield_break`, `zone_change` y `death`. El nuevo récord usa `jingle_record`. Volúmenes en `AUDIO.sfx` y reglas (instancias, variación de tono, racha de monedas) en `AUDIO.sfxRules` (`config.ts`).
 
 - **Música** `audio/music/*.ogg` + `.mp3` de respaldo (generadas con `tools/audio/music.py`, local; solo biblioteca estándar de Python + `ffmpeg`): `music_menu` (100 BPM), `music_zona1`–`music_zona4` (120/130/140/150 BPM), loops de 74–80 s sin cortes, y los jingles de 3 s `jingle_gameover` y `jingle_record`. En `manifest.audio` cada una lista las dos URL; Phaser carga la primera que el navegador soporta. Volúmenes y fundidos en `AUDIO.music` (`config.ts`).
   - **Loops sin cortes:** cada pista dura un número exacto de compases y se renderiza en un búfer circular (la cola de una nota que pasa el final sigue al inicio). Probado: al decodificar, `.ogg` y `.mp3` miden exactamente lo mismo que la fuente.
   - **Reemplazar una pista** (por ejemplo, por una hecha con una IA de música): guarda el archivo nuevo con el mismo nombre en `.ogg` y `.mp3`. Para que el loop no tenga un corte, recórtala a un número exacto de compases.
   - **Regenerar:** `python3 tools/audio/music.py` (todas) o `python3 tools/audio/music.py zona1 menu` (algunas). La salida es siempre la misma (semilla fija por pista).
-
-## Pendiente
-
-Los demás efectos de juego de la sección 13.1.
 
 ## Licencia
 
