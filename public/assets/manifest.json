@@ -1,0 +1,1331 @@
+{
+ "spritesheets": [
+  {
+   "key": "player_body_0",
+   "url": "assets/sprites/player/body_skin0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_body_1",
+   "url": "assets/sprites/player/body_skin1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_body_2",
+   "url": "assets/sprites/player/body_skin2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_body_3",
+   "url": "assets/sprites/player/body_skin3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_0",
+   "url": "assets/sprites/player/outfit_0_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_1",
+   "url": "assets/sprites/player/outfit_0_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_2",
+   "url": "assets/sprites/player/outfit_0_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_3",
+   "url": "assets/sprites/player/outfit_0_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_4",
+   "url": "assets/sprites/player/outfit_0_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_5",
+   "url": "assets/sprites/player/outfit_0_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_6",
+   "url": "assets/sprites/player/outfit_0_6.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_0_7",
+   "url": "assets/sprites/player/outfit_0_7.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_0",
+   "url": "assets/sprites/player/outfit_1_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_1",
+   "url": "assets/sprites/player/outfit_1_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_2",
+   "url": "assets/sprites/player/outfit_1_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_3",
+   "url": "assets/sprites/player/outfit_1_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_4",
+   "url": "assets/sprites/player/outfit_1_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_5",
+   "url": "assets/sprites/player/outfit_1_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_6",
+   "url": "assets/sprites/player/outfit_1_6.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_1_7",
+   "url": "assets/sprites/player/outfit_1_7.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_0",
+   "url": "assets/sprites/player/outfit_2_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_1",
+   "url": "assets/sprites/player/outfit_2_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_2",
+   "url": "assets/sprites/player/outfit_2_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_3",
+   "url": "assets/sprites/player/outfit_2_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_4",
+   "url": "assets/sprites/player/outfit_2_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_5",
+   "url": "assets/sprites/player/outfit_2_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_6",
+   "url": "assets/sprites/player/outfit_2_6.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_2_7",
+   "url": "assets/sprites/player/outfit_2_7.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_0",
+   "url": "assets/sprites/player/outfit_3_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_1",
+   "url": "assets/sprites/player/outfit_3_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_2",
+   "url": "assets/sprites/player/outfit_3_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_3",
+   "url": "assets/sprites/player/outfit_3_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_4",
+   "url": "assets/sprites/player/outfit_3_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_5",
+   "url": "assets/sprites/player/outfit_3_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_6",
+   "url": "assets/sprites/player/outfit_3_6.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_outfit_3_7",
+   "url": "assets/sprites/player/outfit_3_7.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_1_0",
+   "url": "assets/sprites/player/hair_1_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_1_1",
+   "url": "assets/sprites/player/hair_1_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_1_2",
+   "url": "assets/sprites/player/hair_1_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_1_3",
+   "url": "assets/sprites/player/hair_1_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_1_4",
+   "url": "assets/sprites/player/hair_1_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_1_5",
+   "url": "assets/sprites/player/hair_1_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_2_0",
+   "url": "assets/sprites/player/hair_2_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_2_1",
+   "url": "assets/sprites/player/hair_2_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_2_2",
+   "url": "assets/sprites/player/hair_2_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_2_3",
+   "url": "assets/sprites/player/hair_2_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_2_4",
+   "url": "assets/sprites/player/hair_2_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_2_5",
+   "url": "assets/sprites/player/hair_2_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_3_0",
+   "url": "assets/sprites/player/hair_3_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_3_1",
+   "url": "assets/sprites/player/hair_3_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_3_2",
+   "url": "assets/sprites/player/hair_3_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_3_3",
+   "url": "assets/sprites/player/hair_3_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_3_4",
+   "url": "assets/sprites/player/hair_3_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_3_5",
+   "url": "assets/sprites/player/hair_3_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_4_0",
+   "url": "assets/sprites/player/hair_4_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_4_1",
+   "url": "assets/sprites/player/hair_4_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_4_2",
+   "url": "assets/sprites/player/hair_4_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_4_3",
+   "url": "assets/sprites/player/hair_4_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_4_4",
+   "url": "assets/sprites/player/hair_4_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_hair_4_5",
+   "url": "assets/sprites/player/hair_4_5.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_accessory_1",
+   "url": "assets/sprites/player/accessory_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_accessory_2",
+   "url": "assets/sprites/player/accessory_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_accessory_3",
+   "url": "assets/sprites/player/accessory_3.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_accessory_4",
+   "url": "assets/sprites/player/accessory_4.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "player_weapon_0",
+   "url": "assets/sprites/player/weapon_0.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "projectile_0",
+   "url": "assets/sprites/player/projectile_0.png",
+   "frameWidth": 6,
+   "frameHeight": 3,
+   "frames": 2,
+   "frameRate": 12
+  },
+  {
+   "key": "player_weapon_1",
+   "url": "assets/sprites/player/weapon_1.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "projectile_1",
+   "url": "assets/sprites/player/projectile_1.png",
+   "frameWidth": 6,
+   "frameHeight": 3,
+   "frames": 2,
+   "frameRate": 12
+  },
+  {
+   "key": "player_weapon_2",
+   "url": "assets/sprites/player/weapon_2.png",
+   "frameWidth": 16,
+   "frameHeight": 24,
+   "frames": 16
+  },
+  {
+   "key": "projectile_2",
+   "url": "assets/sprites/player/projectile_2.png",
+   "frameWidth": 6,
+   "frameHeight": 3,
+   "frames": 2,
+   "frameRate": 12
+  },
+  {
+   "key": "muzzle",
+   "url": "assets/sprites/fx/muzzle.png",
+   "frameWidth": 6,
+   "frameHeight": 6,
+   "frames": 2,
+   "frameRate": 20
+  },
+  {
+   "key": "enemy_bug",
+   "url": "assets/sprites/enemies/bug.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "frameRate": 10,
+   "faces": "left"
+  },
+  {
+   "key": "enemy_drone",
+   "url": "assets/sprites/enemies/drone.png",
+   "frameWidth": 16,
+   "frameHeight": 12,
+   "frames": 2,
+   "frameRate": 14,
+   "faces": "left"
+  },
+  {
+   "key": "enemy_turret",
+   "url": "assets/sprites/enemies/turret.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "frameNames": [
+    "idle",
+    "warn",
+    "fire",
+    "hit"
+   ],
+   "faces": "left"
+  },
+  {
+   "key": "enemy_bullet",
+   "url": "assets/sprites/enemies/enemy_bullet.png",
+   "frameWidth": 6,
+   "frameHeight": 4,
+   "frames": 2,
+   "frameRate": 12
+  },
+  {
+   "key": "enemy_glitch",
+   "url": "assets/sprites/enemies/glitch.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 5,
+   "frameNames": [
+    "idle0",
+    "idle1",
+    "tp0",
+    "tp1",
+    "tp2"
+   ],
+   "note": "Teletransporte: reproducir 2→4, mover, luego 4→2"
+  },
+  {
+   "key": "explosion",
+   "url": "assets/sprites/fx/explosion.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "frameRate": 13
+  },
+  {
+   "key": "zona1_air",
+   "url": "assets/sprites/obstacles/zona1/air.png",
+   "frameWidth": 32,
+   "frameHeight": 8,
+   "frames": 2,
+   "frameRate": 8
+  },
+  {
+   "key": "zona1_saw",
+   "url": "assets/sprites/obstacles/zona1/saw.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 2,
+   "frameRate": 16
+  },
+  {
+   "key": "zona1_tiles",
+   "url": "assets/tiles/zona1.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "frameNames": [
+    "top_a",
+    "top_b",
+    "fill_a",
+    "fill_b",
+    "edgeL_top",
+    "edgeR_top",
+    "edgeL_fill",
+    "edgeR_fill"
+   ]
+  },
+  {
+   "key": "zona2_air",
+   "url": "assets/sprites/obstacles/zona2/air.png",
+   "frameWidth": 32,
+   "frameHeight": 8,
+   "frames": 2,
+   "frameRate": 8
+  },
+  {
+   "key": "zona2_saw",
+   "url": "assets/sprites/obstacles/zona2/saw.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 2,
+   "frameRate": 16
+  },
+  {
+   "key": "zona2_tiles",
+   "url": "assets/tiles/zona2.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "frameNames": [
+    "top_a",
+    "top_b",
+    "fill_a",
+    "fill_b",
+    "edgeL_top",
+    "edgeR_top",
+    "edgeL_fill",
+    "edgeR_fill"
+   ]
+  },
+  {
+   "key": "zona3_air",
+   "url": "assets/sprites/obstacles/zona3/air.png",
+   "frameWidth": 32,
+   "frameHeight": 8,
+   "frames": 2,
+   "frameRate": 8
+  },
+  {
+   "key": "zona3_saw",
+   "url": "assets/sprites/obstacles/zona3/saw.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 2,
+   "frameRate": 16
+  },
+  {
+   "key": "zona3_tiles",
+   "url": "assets/tiles/zona3.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "frameNames": [
+    "top_a",
+    "top_b",
+    "fill_a",
+    "fill_b",
+    "edgeL_top",
+    "edgeR_top",
+    "edgeL_fill",
+    "edgeR_fill"
+   ]
+  },
+  {
+   "key": "zona4_air",
+   "url": "assets/sprites/obstacles/zona4/air.png",
+   "frameWidth": 32,
+   "frameHeight": 8,
+   "frames": 2,
+   "frameRate": 8
+  },
+  {
+   "key": "zona4_saw",
+   "url": "assets/sprites/obstacles/zona4/saw.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 2,
+   "frameRate": 16
+  },
+  {
+   "key": "zona4_tiles",
+   "url": "assets/tiles/zona4.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "frameNames": [
+    "top_a",
+    "top_b",
+    "fill_a",
+    "fill_b",
+    "edgeL_top",
+    "edgeR_top",
+    "edgeL_fill",
+    "edgeR_fill"
+   ]
+  },
+  {
+   "key": "coin",
+   "url": "assets/sprites/pickups/coin.png",
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 4,
+   "frameRate": 10
+  },
+  {
+   "key": "powerups",
+   "url": "assets/sprites/pickups/powerups.png",
+   "frameWidth": 12,
+   "frameHeight": 12,
+   "frames": 6,
+   "frameNames": [
+    "shield",
+    "magnet",
+    "doublejump",
+    "tripleshot",
+    "x2",
+    "turbo"
+   ],
+   "labels": [
+    "Escudo",
+    "Imán",
+    "Doble salto",
+    "Disparo triple",
+    "Puntos ×2",
+    "Turbo"
+   ]
+  },
+  {
+   "key": "fx_shield",
+   "url": "assets/sprites/fx/shield_bubble.png",
+   "frameWidth": 24,
+   "frameHeight": 28,
+   "frames": 2,
+   "frameRate": 6
+  },
+  {
+   "key": "fx_aura",
+   "url": "assets/sprites/fx/aura.png",
+   "frameWidth": 20,
+   "frameHeight": 28,
+   "frames": 4,
+   "frameRate": 12
+  },
+  {
+   "key": "fx_trail",
+   "url": "assets/sprites/fx/trail.png",
+   "frameWidth": 24,
+   "frameHeight": 20,
+   "frames": 3,
+   "frameRate": 15
+  },
+  {
+   "key": "fx_dust",
+   "url": "assets/sprites/fx/dust.png",
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 4,
+   "frameRate": 14
+  },
+  {
+   "key": "fx_spark",
+   "url": "assets/sprites/fx/spark.png",
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 4,
+   "frameRate": 16
+  },
+  {
+   "key": "button",
+   "url": "assets/ui/button.png",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 3,
+   "frameNames": [
+    "normal",
+    "hover",
+    "pressed"
+   ],
+   "nineSlice": 5
+  },
+  {
+   "key": "icons",
+   "url": "assets/ui/icons.png",
+   "frameWidth": 12,
+   "frameHeight": 12,
+   "frames": 13,
+   "frameNames": [
+    "pause",
+    "play",
+    "sound_on",
+    "sound_off",
+    "music_on",
+    "music_off",
+    "fullscreen",
+    "retry",
+    "home",
+    "dice",
+    "arrow_l",
+    "arrow_r",
+    "reset"
+   ]
+  },
+  {
+   "key": "touch_jump",
+   "url": "assets/ui/touch_jump.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "frameNames": [
+    "normal",
+    "pressed"
+   ],
+   "alpha": 0.55
+  },
+  {
+   "key": "touch_crouch",
+   "url": "assets/ui/touch_crouch.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "frameNames": [
+    "normal",
+    "pressed"
+   ],
+   "alpha": 0.55
+  },
+  {
+   "key": "touch_shoot",
+   "url": "assets/ui/touch_shoot.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "frameNames": [
+    "normal",
+    "pressed"
+   ],
+   "alpha": 0.55
+  },
+  {
+   "key": "touch_pause",
+   "url": "assets/ui/touch_pause.png",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "frameNames": [
+    "normal",
+    "pressed"
+   ],
+   "alpha": 0.55
+  }
+ ],
+ "images": [
+  {
+   "key": "palette",
+   "url": "assets/palette/endesga32.png",
+   "width": 32,
+   "height": 1
+  },
+  {
+   "key": "zona1_low",
+   "url": "assets/sprites/obstacles/zona1/low.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona1_spikes",
+   "url": "assets/sprites/obstacles/zona1/spikes.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona1_wall",
+   "url": "assets/sprites/obstacles/zona1/wall.png",
+   "width": 16,
+   "height": 32
+  },
+  {
+   "key": "zona1_double",
+   "url": "assets/sprites/obstacles/zona1/double.png",
+   "width": 32,
+   "height": 16
+  },
+  {
+   "key": "zona1_bg_far",
+   "url": "assets/backgrounds/zona1_far.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.1,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona1_bg_mid",
+   "url": "assets/backgrounds/zona1_mid.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.3,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona1_bg_near",
+   "url": "assets/backgrounds/zona1_near.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.6,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona2_low",
+   "url": "assets/sprites/obstacles/zona2/low.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona2_spikes",
+   "url": "assets/sprites/obstacles/zona2/spikes.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona2_wall",
+   "url": "assets/sprites/obstacles/zona2/wall.png",
+   "width": 16,
+   "height": 32
+  },
+  {
+   "key": "zona2_double",
+   "url": "assets/sprites/obstacles/zona2/double.png",
+   "width": 32,
+   "height": 16
+  },
+  {
+   "key": "zona2_bg_far",
+   "url": "assets/backgrounds/zona2_far.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.1,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona2_bg_mid",
+   "url": "assets/backgrounds/zona2_mid.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.3,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona2_bg_near",
+   "url": "assets/backgrounds/zona2_near.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.6,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona3_low",
+   "url": "assets/sprites/obstacles/zona3/low.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona3_spikes",
+   "url": "assets/sprites/obstacles/zona3/spikes.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona3_wall",
+   "url": "assets/sprites/obstacles/zona3/wall.png",
+   "width": 16,
+   "height": 32
+  },
+  {
+   "key": "zona3_double",
+   "url": "assets/sprites/obstacles/zona3/double.png",
+   "width": 32,
+   "height": 16
+  },
+  {
+   "key": "zona3_bg_far",
+   "url": "assets/backgrounds/zona3_far.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.1,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona3_bg_mid",
+   "url": "assets/backgrounds/zona3_mid.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.3,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona3_bg_near",
+   "url": "assets/backgrounds/zona3_near.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.6,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona4_low",
+   "url": "assets/sprites/obstacles/zona4/low.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona4_spikes",
+   "url": "assets/sprites/obstacles/zona4/spikes.png",
+   "width": 16,
+   "height": 16
+  },
+  {
+   "key": "zona4_wall",
+   "url": "assets/sprites/obstacles/zona4/wall.png",
+   "width": 16,
+   "height": 32
+  },
+  {
+   "key": "zona4_double",
+   "url": "assets/sprites/obstacles/zona4/double.png",
+   "width": 32,
+   "height": 16
+  },
+  {
+   "key": "zona4_bg_far",
+   "url": "assets/backgrounds/zona4_far.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.1,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona4_bg_mid",
+   "url": "assets/backgrounds/zona4_mid.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.3,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "zona4_bg_near",
+   "url": "assets/backgrounds/zona4_near.png",
+   "width": 320,
+   "height": 180,
+   "parallax": 0.6,
+   "seamless": "horizontal"
+  },
+  {
+   "key": "logo",
+   "url": "assets/ui/logo.png",
+   "width": 168,
+   "height": 52
+  },
+  {
+   "key": "panel",
+   "url": "assets/ui/panel.png",
+   "width": 16,
+   "height": 16,
+   "nineSlice": 5
+  }
+ ],
+ "bitmapFonts": [
+  {
+   "key": "vault",
+   "textureURL": "assets/fonts/vault5x7.png",
+   "fontDataURL": "assets/fonts/vault5x7.xml",
+   "note": "Solo mayúsculas; usar text.toUpperCase(). Incluye ÁÉÍÓÚÜÑ¡¿×."
+  }
+ ],
+ "audio": [
+  {
+   "key": "ui_move",
+   "url": "assets/audio/sfx/ui_move.wav"
+  },
+  {
+   "key": "ui_change",
+   "url": "assets/audio/sfx/ui_change.wav"
+  },
+  {
+   "key": "ui_confirm",
+   "url": "assets/audio/sfx/ui_confirm.wav"
+  },
+  {
+   "key": "ui_back",
+   "url": "assets/audio/sfx/ui_back.wav"
+  },
+  {
+   "key": "ui_random",
+   "url": "assets/audio/sfx/ui_random.wav"
+  },
+  {
+   "key": "ui_reset",
+   "url": "assets/audio/sfx/ui_reset.wav"
+  },
+  {
+   "key": "ui_type",
+   "url": "assets/audio/sfx/ui_type.wav"
+  },
+  {
+   "key": "powerup_pickup",
+   "url": "assets/audio/sfx/powerup_pickup.wav"
+  },
+  {
+   "key": "powerup_end",
+   "url": "assets/audio/sfx/powerup_end.wav"
+  },
+  {
+   "key": "jump",
+   "url": "assets/audio/sfx/jump.wav"
+  },
+  {
+   "key": "double_jump",
+   "url": "assets/audio/sfx/double_jump.wav"
+  },
+  {
+   "key": "land",
+   "url": "assets/audio/sfx/land.wav"
+  },
+  {
+   "key": "crouch",
+   "url": "assets/audio/sfx/crouch.wav"
+  },
+  {
+   "key": "shoot_0",
+   "url": "assets/audio/sfx/shoot_0.wav"
+  },
+  {
+   "key": "shoot_1",
+   "url": "assets/audio/sfx/shoot_1.wav"
+  },
+  {
+   "key": "shoot_2",
+   "url": "assets/audio/sfx/shoot_2.wav"
+  },
+  {
+   "key": "enemy_hit",
+   "url": "assets/audio/sfx/enemy_hit.wav"
+  },
+  {
+   "key": "enemy_explode",
+   "url": "assets/audio/sfx/enemy_explode.wav"
+  },
+  {
+   "key": "turret_shot",
+   "url": "assets/audio/sfx/turret_shot.wav"
+  },
+  {
+   "key": "coin",
+   "url": "assets/audio/sfx/coin.wav"
+  },
+  {
+   "key": "shield_break",
+   "url": "assets/audio/sfx/shield_break.wav"
+  },
+  {
+   "key": "zone_change",
+   "url": "assets/audio/sfx/zone_change.wav"
+  },
+  {
+   "key": "death",
+   "url": "assets/audio/sfx/death.wav"
+  },
+  {
+   "key": "music_menu",
+   "url": [
+    "assets/audio/music/music_menu.ogg",
+    "assets/audio/music/music_menu.mp3"
+   ]
+  },
+  {
+   "key": "music_zona1",
+   "url": [
+    "assets/audio/music/music_zona1.ogg",
+    "assets/audio/music/music_zona1.mp3"
+   ]
+  },
+  {
+   "key": "music_zona2",
+   "url": [
+    "assets/audio/music/music_zona2.ogg",
+    "assets/audio/music/music_zona2.mp3"
+   ]
+  },
+  {
+   "key": "music_zona3",
+   "url": [
+    "assets/audio/music/music_zona3.ogg",
+    "assets/audio/music/music_zona3.mp3"
+   ]
+  },
+  {
+   "key": "music_zona4",
+   "url": [
+    "assets/audio/music/music_zona4.ogg",
+    "assets/audio/music/music_zona4.mp3"
+   ]
+  },
+  {
+   "key": "jingle_gameover",
+   "url": [
+    "assets/audio/music/jingle_gameover.ogg",
+    "assets/audio/music/jingle_gameover.mp3"
+   ]
+  },
+  {
+   "key": "jingle_record",
+   "url": [
+    "assets/audio/music/jingle_record.ogg",
+    "assets/audio/music/jingle_record.mp3"
+   ]
+  }
+ ],
+ "notes": {
+  "player": {
+   "frameOrder": [
+    "run0",
+    "run1",
+    "run2",
+    "run3",
+    "run4",
+    "run5",
+    "jump",
+    "fall",
+    "crouch0",
+    "crouch1",
+    "shoot0",
+    "shoot1",
+    "death0",
+    "death1",
+    "death2",
+    "death3"
+   ],
+   "animations": {
+    "run": {
+     "start": 0,
+     "end": 5,
+     "frameRate": 12
+    },
+    "jump": {
+     "start": 6,
+     "end": 6,
+     "frameRate": 1
+    },
+    "fall": {
+     "start": 7,
+     "end": 7,
+     "frameRate": 1
+    },
+    "crouch": {
+     "start": 8,
+     "end": 9,
+     "frameRate": 6
+    },
+    "shoot": {
+     "start": 10,
+     "end": 11,
+     "frameRate": 12
+    },
+    "death": {
+     "start": 12,
+     "end": 15,
+     "frameRate": 10
+    }
+   },
+   "layerOrder": [
+    "body_skin{skin}",
+    "outfit_{outfit}_{outfitColor}",
+    "hair_{hair}_{hairColor} (hair 0 = sin capa)",
+    "accessory_{accessory} (0 = sin capa)",
+    "weapon_{weapon}"
+   ],
+   "origin": "Pies en y=23 (fila inferior del frame). Agachado ocupa las 14 filas inferiores (sprite 16x14 alineado al suelo).",
+   "options": {
+    "skin": [
+     "Claro",
+     "Medio claro",
+     "Medio",
+     "Oscuro"
+    ],
+    "outfit": [
+     "Playera",
+     "Sudadera",
+     "Overol",
+     "Chamarra"
+    ],
+    "outfitColor": [
+     "Rojo",
+     "Naranja",
+     "Amarillo",
+     "Verde",
+     "Cian",
+     "Azul",
+     "Morado",
+     "Gris"
+    ],
+    "hair": [
+     "Sin cabello",
+     "Corto",
+     "Picudo",
+     "Largo",
+     "Afro"
+    ],
+    "hairColor": [
+     "Negro",
+     "Castaño",
+     "Rubio",
+     "Pelirrojo",
+     "Rosa",
+     "Azul"
+    ],
+    "accessory": [
+     "Ninguno",
+     "Gorra",
+     "Lentes",
+     "Audífonos",
+     "Casco"
+    ],
+    "weapon": [
+     "Blaster",
+     "Resortera",
+     "Varita"
+    ]
+   }
+  }
+ }
+}
